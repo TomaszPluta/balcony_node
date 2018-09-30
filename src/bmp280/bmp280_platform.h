@@ -5,8 +5,8 @@
  *      Author: tomek
  */
 
-#ifndef BMP280_HAL_H_
-#define BMP280_HAL_H_
+#ifndef BMP280_PLATFORM_H_
+#define BMP280_PLATFORM_H_
 
 #include "stm32f0xx.h"
 
@@ -27,6 +27,7 @@ extern "C" {
 #define u8							uint8_t
 #define u32							uint32_t
 
+struct bmp280_t;
 
 uint8_t  spi_read_write_string(uint8_t * read, uint8_t* write, uint8_t cnt);
 s8  BMP280_SPI_bus_read(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt);
@@ -34,6 +35,7 @@ s8  BMP280_SPI_bus_write(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt);
 void  BMP280_delay_msek(u32 msek);
 s8 SPI_routine(void);
 s8 bmp280_assign_SPI(struct bmp280_t *bmp280);
+
 uint8_t bmp280_init_Csn (void);
 
 #ifdef __cplusplus
@@ -41,4 +43,4 @@ uint8_t bmp280_init_Csn (void);
 #endif
 
 
-#endif /* BMP280_HAL_H_ */
+#endif /* BMP280_PLATFORM_H_ */

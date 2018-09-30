@@ -1,7 +1,6 @@
 
+#include <bmp280_platform.h>
 #include "bmp280.h"
-#include "bmp280_hal.h"
-
 #include "stm32f042_spi.h"
 
 uint8_t  spi_read_write_string(uint8_t * read, uint8_t* write, uint8_t cnt){
