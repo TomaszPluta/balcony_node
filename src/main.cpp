@@ -62,6 +62,13 @@ int main(void)
 	bmp280_init_Csn();
 
 	bmp280_assign_SPI(&bmp280);
+
+	uint8_t v_data_u8;
+//	  bmp280.BMP280_BUS_READ_FUNC(bmp280.dev_addr,	BMP280_CHIP_ID_REG, &v_data_u8, BMP280_GEN_READ_WRITE_DATA_LENGTH);
+//	  bmp280.BMP280_BUS_READ_FUNC(bmp280.dev_addr,	BMP280_STAT_REG, &v_data_u8, BMP280_GEN_READ_WRITE_DATA_LENGTH);
+//	  bmp280.BMP280_BUS_READ_FUNC(bmp280.dev_addr,	BMP280_TEMPERATURE_LSB_REG, &v_data_u8, BMP280_GEN_READ_WRITE_DATA_LENGTH);
+//	  bmp280.BMP280_BUS_READ_FUNC(bmp280.dev_addr,	BMP280_CONFIG_REG, &v_data_u8, BMP280_GEN_READ_WRITE_DATA_LENGTH);
+
 	bmp280_init(&bmp280);
 
 	 signed long temperature;
@@ -71,10 +78,10 @@ int main(void)
 	 signed long press_out;
 
  uint8_t powerMode;
-//	 bmp280_set_power_mode(3);
+	 bmp280_set_power_mode(3);
 	 bmp280_get_power_mode(&powerMode);
-//	 bmp280_set_oversamp_temperature(5);
-//	 bmp280_set_oversamp_pressure(5);
+	 bmp280_set_oversamp_temperature(3);
+	 bmp280_set_oversamp_pressure(3);
 
 	bmp280_read_uncomp_temperature(&temperature);
 	temp_out = bmp280_compensate_temperature_int32(temperature);
