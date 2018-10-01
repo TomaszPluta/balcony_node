@@ -32,7 +32,9 @@ SOFTWARE.
 #include "stm32f0xx.h"
 #include "stm32f042_spi.h"
 #include "bmp280.h"
-
+#include "stm32f042_gpio.h"
+#include "__rfm12b_platform.h"
+#include "__rfm12b.h"
 /* Private macro */
 /* Private variables */
 /* Private function prototypes */
@@ -46,12 +48,24 @@ SOFTWARE.
 **===========================================================================
 */
 
-
-
-
-
-
+volatile rfm12bObj_t rfm12b;
 struct bmp280_t bmp280;
+
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+void EXTI0_1_IRQHandler (void){
+	Rfm12bIrqCallback(&rfm12b);
+}
+
+#ifdef __cplusplus
+}
+#endif
+
 
 int main(void)
 {
@@ -105,10 +119,19 @@ int main(void)
 
 
 
+	SetGpioA0AsExtiFall();
 
 
 
 
+ 	Rfm12bInit();
+// 	_delay_ms(1000);	//wymagane opoznienie
+ 	uint8_t sst =   Rfm12bWriteCmd(0x0000);
+
+ 	rfm12bFifoReset();
+ 	rfm12bSwitchRx();
+
+ 	Rrm12bObjInit (&rfm12b, 2);
 
 
 
@@ -125,6 +148,8 @@ int main(void)
 
   while (1)
   {
-
+		asm volatile ("nop");
+		asm volatile ("nop");
+		asm volatile ("nop");
   }
 }

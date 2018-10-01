@@ -22,9 +22,12 @@ extern "C" {
 #define RFM12B_IRQ_PIN_NB			(0)
 
 
+#define RFM12B_CS_PORT 			(GPIOF)
+#define RFM12B_CS_PIN_NB			(1)
 
-#define NSEL_RFM12_LOW              (RFM12B_IRQ_PORT->ODR &= ~(1<<RFM12B_IRQ_PIN_NB))
-#define NSEL_RFM12_HIGH             (RFM12B_IRQ_PORT->ODR |= (1<<RFM12B_IRQ_PIN_NB))
+
+#define NSEL_RFM12_LOW              (RFM12B_CS_PORT->ODR &= ~(1<<RFM12B_CS_PIN_NB))
+#define NSEL_RFM12_HIGH             (RFM12B_CS_PORT->ODR |= (1<<RFM12B_CS_PIN_NB))
 
 
 void Rfm12bSpiInit(void);

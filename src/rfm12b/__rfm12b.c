@@ -37,7 +37,7 @@ void Rfm12bInit() {
 }
 
 void Rrm12bObjInit (volatile rfm12bObj_t * rfm12bObj, uint8_t module_addr){
-	memset(rfm12bObj, 0, sizeof(rfm12bObj_t));
+	memset((void*)rfm12bObj, 0, sizeof(rfm12bObj_t));
 	rfm12bObj->module_addr = module_addr;
 	rfm12bObj->state = receive;
 }
@@ -59,22 +59,22 @@ void Rfm12bSendByte(uint8_t byte)
 
 
 
-
-static void rfSend(uint8_t data)
-{
-	uint16_t temp=0xB800;
-	uint16_t status=0x0000;
-	temp|=data;
-
-	if (  !status )
-	{
-		//status = RFM12B_RDSTATUS();
-		status = Rfm12bWriteCmd(0x0000);
-		status = status & 0x8000;
-	}
-
-	Rfm12bWriteCmd(temp);
-}
+//
+//static void rfSend(uint8_t data)
+//{
+//	uint16_t temp=0xB800;
+//	uint16_t status=0x0000;
+//	temp|=data;
+//
+//	if (  !status )
+//	{
+//		//status = RFM12B_RDSTATUS();
+//		status = Rfm12bWriteCmd(0x0000);
+//		status = status & 0x8000;
+//	}
+//
+//	Rfm12bWriteCmd(temp);
+//}
 
 
 
@@ -119,12 +119,12 @@ void Rfm12bMantainSending(volatile rfm12bObj_t * rfm12b){
 }
 
 static void Rfm12bMoveDataToCompletedBuff(volatile rfm12bObj_t * rfm12b){
-	memset(&rfm12b->completedRxBuff, 0, sizeof (rfm12bBuff_t));
-	memcpy(rfm12b->completedRxBuff.data,  &rfm12b->rxBuff.data[L2_HEADER_SIZE], rfm12b->rxBuff.dataNb);
+	memset((void*)&rfm12b->completedRxBuff, 0, sizeof (rfm12bBuff_t));
+	memcpy((void*)rfm12b->completedRxBuff.data,  (void*)&rfm12b->rxBuff.data[L2_HEADER_SIZE], rfm12b->rxBuff.dataNb);
 	rfm12b->completedRxBuff.dataNb = rfm12b->rxBuff.dataNb;
 	rfm12b->completedRxBuff.rxTOAddr = rfm12b->rxBuff.data[ADDR_TO_POS]; //cast this values as frame to struct
 	rfm12b->completedRxBuff.rxFromAddr = rfm12b->rxBuff.data[ADDR_FROM_POS];
-	memset(&rfm12b->rxBuff, 0, sizeof (rfm12bBuff_t));
+	memset((void*)&rfm12b->rxBuff, 0, sizeof (rfm12bBuff_t));
 }
 
 static void Rfm12bresetRx(volatile rfm12bObj_t * rfm12b){
@@ -177,27 +177,27 @@ void RF12_SCAN(void)
 	Rfm12bWriteCmd(0xCA83);
 }
 
-
-void RF12_TXPACKET(uint8_t *buff, uint8_t bytesNb)
-{
-
-	char i;
-	WriteCmd(0x0000);
-	rfSend(0xAA);//PREAMBLE
-	rfSend(0xAA);//PREAMBLE
-	rfSend(0xAA);//PREAMBLE
-	rfSend(0x2D);//SYNC HI BYTE
-	rfSend(0xD4);//SYNC LOW BYTE
-	for(i = 0; i < bytesNb; i++)
-	{
-	//	Rfm12bSendByte(buff[i]);
-		rfSend(buff[i]);
-	}
-	rfSend(0xAA);
-	rfSend(0xAA);
-	RF12_SCAN();
-}
-
+//
+//void RF12_TXPACKET(uint8_t *buff, uint8_t bytesNb)
+//{
+//
+//	char i;
+//	WriteCmd(0x0000);
+//	rfSend(0xAA);//PREAMBLE
+//	rfSend(0xAA);//PREAMBLE
+//	rfSend(0xAA);//PREAMBLE
+//	rfSend(0x2D);//SYNC HI BYTE
+//	rfSend(0xD4);//SYNC LOW BYTE
+//	for(i = 0; i < bytesNb; i++)
+//	{
+//	//	Rfm12bSendByte(buff[i]);
+//		rfSend(buff[i]);
+//	}
+//	rfSend(0xAA);
+//	rfSend(0xAA);
+//	RF12_SCAN();
+//}
+//
 
 
 

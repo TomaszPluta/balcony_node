@@ -108,7 +108,7 @@ s8 bmp280_assign_SPI(struct bmp280_t *bmp280) {
 }
 
 
-uint8_t bmp280_init_Csn (void){
+void bmp280_init_Csn (void){
 	GPIOF->MODER |= GPIO_MODER_MODER0_0;
 }
 
