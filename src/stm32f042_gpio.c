@@ -9,7 +9,7 @@
 
 void SetPInPullUp (GPIO_TypeDef * gpioPort, uint8_t pinNB){
 	const uint8_t pupdrPullUp = 0x1U;
-	gpioPort->PUPDR |= (pupdrPullUp << pinNB);
+	gpioPort->PUPDR |= (pupdrPullUp << (pinNB*2));
 	gpioPort->ODR |= (1 << pinNB);
 }
 
@@ -20,9 +20,13 @@ void SetGpioA0AsExtiFall (void){
 	SYSCFG->EXTICR[1] &= (uint16_t)~SYSCFG_EXTICR1_EXTI0_PA;
 	EXTI->IMR = 0x0001;
 	EXTI->FTSR = 0x0001;
-	NVIC_EnableIRQ(EXTI0_1_IRQn);
-	NVIC_SetPriority(EXTI0_1_IRQn,0);
+}
 
+
+
+void SetPinOut (GPIO_TypeDef * gpioPort, uint8_t pinNB){
+	const uint8_t moderOut = 0x1U;
+	gpioPort->MODER |= (moderOut << (pinNB*2));
 }
 
 

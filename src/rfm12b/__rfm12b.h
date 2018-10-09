@@ -93,6 +93,10 @@ void Rfm12bStartSending (volatile rfm12bObj_t * rfm12b, uint8_t *data, uint8_t d
 void Rfm12bIrqCallback (volatile rfm12bObj_t * rfm12bObj);
 
 
+ void Rfm12bMantainreceiving(volatile rfm12bObj_t * rfm12b);
+ void Rfm12bMantainSending(volatile rfm12bObj_t * rfm12b);
+
+
 
 void RF12_TXPACKET(uint8_t *buff, uint8_t bytesNb);
 

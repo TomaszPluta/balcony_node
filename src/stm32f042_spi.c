@@ -18,7 +18,7 @@ void Spi1Init8bit (void){
 void Spi1Init16bit (void){
 	RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
 	SPI1->CR1 |= SPI_CR1_MSTR | SPI_CR1_BR_2 | SPI_CR1_SSM;
-	SPI1->CR2 |= SPI_CR2_SSOE | SPI_CR2_DS_2 | SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0 ;
+	SPI1->CR2 |= SPI_CR2_SSOE | SPI_CR2_DS_3 | SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0 ;
 	SPI1->CR1 |= SPI_CR1_SPE;
 }
 
@@ -50,9 +50,9 @@ uint8_t  Spi1Transmit8bit(uint8_t byte){
 
 uint16_t Spi1Transmit16bit(uint16_t word){
 	while (!(SPI1->SR & SPI_SR_TXE));
-	(SPI1->DR) = word;
+	*(__IO uint16_t *)&SPI1->DR = word;
 	while (!(SPI1->SR & SPI_SR_RXNE));
-	return (SPI1->DR);
+	return *(uint16_t*)&(SPI1->DR);
 }
 
 

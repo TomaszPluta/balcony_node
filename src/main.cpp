@@ -35,10 +35,6 @@ SOFTWARE.
 #include "stm32f042_gpio.h"
 #include "__rfm12b_platform.h"
 #include "__rfm12b.h"
-/* Private macro */
-/* Private variables */
-/* Private function prototypes */
-/* Private functions */
 
 /**
 **===========================================================================
@@ -48,7 +44,80 @@ SOFTWARE.
 **===========================================================================
 */
 
-volatile rfm12bObj_t rfm12b;
+#define NODE_ADDR		(2)
+
+
+#define M_TX_READY  (uint16_t)0b1000000000000000
+#define M_FIFO_IT   (uint16_t)0b1000000000000000
+#define M_POR       (uint16_t)0b0100000000000000
+#define M_TX_OVF    (uint16_t)0b0010000000000000
+#define M_FIFO_OVF  (uint16_t)0b0010000000000000
+#define M_WKUP_OVF  (uint16_t)0b0001000000000000
+#define M_EXT_INT   (uint16_t)0b0000100000000000
+#define M_BOD       (uint16_t)0b0000010000000000
+#define M_FIFO_EMP  (uint16_t)0b0000001000000000
+#define M_ATS_OK    (uint16_t)0b0000000100000000
+#define M_RSSI_OK   (uint16_t)0b0000000100000000
+#define M_DQD_OK    (uint16_t)0b0000000010000000
+#define M_CLK_RECOV (uint16_t)0b0000000001000000
+#define M_ACF_TGL   (uint16_t)0b0000000000100000
+#define M_F_OFS_SIG (uint16_t)0b0000000000010000
+#define M_F_OFS     (uint16_t)0b0000000000001111
+
+#define SW_RESET (uint16_t)0b1111111000000000
+
+
+//
+//		if (status & M_TX_READY){
+//			asm volatile ("nop");
+//		}
+//		if (status & M_POR){
+//			asm volatile ("nop");
+//		}
+//		if (status & M_TX_OVF){
+//			asm volatile ("nop");
+//		}
+//		if (status & M_FIFO_OVF){
+//			asm volatile ("nop");
+//		}
+//		if (status & M_WKUP_OVF){
+//			asm volatile ("nop");
+//		}
+//		if (status & M_EXT_INT){
+//			asm volatile ("nop");
+//		}
+//		if (status & M_BOD){
+//			asm volatile ("nop");
+//		}
+//		if (status & M_FIFO_EMP){
+//			asm volatile ("nop");
+//		}
+//		if (status & M_ATS_OK){
+//			asm volatile ("nop");
+//		}
+//		if (status & M_RSSI_OK){
+//			asm volatile ("nop");
+//		}
+//		if (status & M_DQD_OK){
+//			asm volatile ("nop");
+//		}
+//		if (status & M_CLK_RECOV){
+//			asm volatile ("nop");
+//		}
+//		if (status & M_ACF_TGL){
+//			asm volatile ("nop");
+//		}
+//		if (status & M_F_OFS_SIG){
+//			asm volatile ("nop");
+//		}
+//		if (status & M_F_OFS){
+//			asm volatile ("nop");
+//		}
+//
+//
+
+
+volatile rfm12bObj_t rfm12bObj;
 struct bmp280_t bmp280;
 
 
@@ -59,7 +128,10 @@ extern "C" {
 
 
 void EXTI0_1_IRQHandler (void){
-	Rfm12bIrqCallback(&rfm12b);
+	GPIOA->ODR ^= (1 << 3);
+	NVIC_ClearPendingIRQ(EXTI0_1_IRQn);
+	Rfm12bIrqCallback(&rfm12bObj);
+	EXTI->PR |= EXTI_PR_PR0;
 }
 
 #ifdef __cplusplus
@@ -67,89 +139,181 @@ void EXTI0_1_IRQHandler (void){
 #endif
 
 
+
+ void _delay_ms(int n) {
+
+ 	int i, j;
+ 	j= n*1000;
+ 	while(j--) {
+ 		i=2;
+ 		while(i--);
+ 	}
+ }
+
+
+
 int main(void)
 {
 	SystemCoreClockUpdate();
 	GpioInitForSpi1();
 
-	Spi1Init8bit();
-	bmp280_init_Csn();
+//	Spi1Init8bit();
+//	bmp280_init_Csn();
+//
+//	bmp280_assign_SPI(&bmp280);
+//
+//	uint8_t v_data_u8;
+//
+//	bmp280_init(&bmp280);
+//
+//	signed long temperature;
+//	signed long pressure;
+//
+//	signed long temp_out;
+//	signed long press_out;
+//
+//
+//
+//	bmp280_set_oversamp_temperature(3);
+//	bmp280_set_oversamp_pressure(3);
+//
+//	uint8_t powerMode;
+//
+//
+//	bmp280_set_power_mode(0);
+//	bmp280_get_power_mode(&powerMode);
+//
+//	bmp280_read_uncomp_temperature(&temperature);
+//	temp_out = bmp280_compensate_temperature_int32(temperature);
+//
+//	bmp280_read_uncomp_pressure(&pressure);
+//	press_out = bmp280_compensate_pressure_int32(pressure);
+//
+//
+//	bmp280_set_power_mode(3);
+//	bmp280_get_power_mode(&powerMode);
+//
+//	bmp280_read_uncomp_temperature(&temperature);
+//	temp_out = bmp280_compensate_temperature_int32(temperature);
+//
+//	bmp280_read_uncomp_pressure(&pressure);
+//	press_out = bmp280_compensate_pressure_int32(pressure);
 
-	bmp280_assign_SPI(&bmp280);
-
-	uint8_t v_data_u8;
-
-	bmp280_init(&bmp280);
-
-	signed long temperature;
-	signed long pressure;
-
-	signed long temp_out;
-	signed long press_out;
-
-
-
-	bmp280_set_oversamp_temperature(3);
-	bmp280_set_oversamp_pressure(3);
-
-	uint8_t powerMode;
-
-
-	bmp280_set_power_mode(0);
-	bmp280_get_power_mode(&powerMode);
-
-	bmp280_read_uncomp_temperature(&temperature);
-	temp_out = bmp280_compensate_temperature_int32(temperature);
-
-	bmp280_read_uncomp_pressure(&pressure);
-	press_out = bmp280_compensate_pressure_int32(pressure);
-
-
-	bmp280_set_power_mode(3);
-	bmp280_get_power_mode(&powerMode);
-
-	bmp280_read_uncomp_temperature(&temperature);
-	temp_out = bmp280_compensate_temperature_int32(temperature);
-
-	bmp280_read_uncomp_pressure(&pressure);
-	press_out = bmp280_compensate_pressure_int32(pressure);
-
-
-
-
-
-
-	SetGpioA0AsExtiFall();
+	/*led init*/
+	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
+	SetPinOut(GPIOA, 3);
+	SetPInPullUp(GPIOA, 3);
+	GPIOA->ODR |= (1 << 3);
 
 
 
 
  	Rfm12bInit();
-// 	_delay_ms(1000);	//wymagane opoznienie
- 	uint8_t sst =   Rfm12bWriteCmd(0x0000);
+ 	_delay_ms(1000);	//wymagane opoznienie
+ 	Rfm12bWriteCmd(0x0000);
+	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
+	SetGpioA0AsExtiFall();
+	SetPInPullUp(RFM12B_IRQ_PORT, RFM12B_IRQ_PIN_NB);
+
 
  	rfm12bFifoReset();
  	rfm12bSwitchRx();
-
- 	Rrm12bObjInit (&rfm12b, 2);
-
-
+ 	NVIC_EnableIRQ(EXTI0_1_IRQn);
+ 	Rrm12bObjInit (&rfm12bObj, NODE_ADDR);
 
 
+//
+//	uint8_t buff[] = "abcdefghijabcdefghijabcdefghij";
+//	Rfm12bStartSending(&rfm12bObj, buff, 30, 1);
 
 
-
-
-
-
+while (1);
 
 
 
 
-  while (1)
-  {
-		asm volatile ("nop");
-		asm volatile ("nop");
-		asm volatile ("nop");
-  }
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
+//	SetGpioA0AsExtiFall();
+// 	Rfm12bWriteCmd(SW_RESET);
+// 	Rfm12bInit();
+// 	uint16_t status;
+// 	status= Rfm12bWriteCmd(0x0000);
+// 	Rrm12bObjInit (&rfm12b, 2);
+// 	rfm12bFifoReset();
+// 	rfm12bSwitchRx();
+// 	uint16_t sst3 =   Rfm12bWriteCmd(0x0000);
+//	NVIC_EnableIRQ(EXTI0_1_IRQn);
+//
+//
+//
+//
+//
+////
+////	  uint8_t buff[] = "abcdefghijabcdefghijabcdefghij";
+////		 			  Rfm12bStartSending(&rfm12b, buff, 30, 2);
+////
+//
+////	  uint8_t buff[] = "abcdefghijabcdefghijabcdefghij";
+////	  Rfm12bStartSending(&rfm12b, buff, 30, 1);
+//
+//  while (1)
+//  {
+//////
+//////	  uint16_t status = Rfm12bWriteCmd(0x0000);
+//////
+//////	  	if (status & RFM12_STATUS_FFIT ){
+//////	  		if (rfm12b.state == transmit){
+//////	  			Rfm12bMantainSending(&rfm12b);
+//////	  		}
+//////	  		else{
+//////	  			Rfm12bMantainreceiving(&rfm12b);
+//////	  		}
+//////	  	}
+////
+////	  	for (uint16_t i =0; i < 0xFFF; i++)
+////	  	{
+////	  		asm volatile ("nop");
+////	  	}
+////
+////	   uint8_t rxb = rfm12bRecv();
+////	   if (rxb){
+////		   asm volatile ("nop");
+////  }
+////  }
+//}
+//}
+//}

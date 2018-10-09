@@ -11,17 +11,20 @@
 
 void Rfm12bSpiInit(void) {
 
-
+	SPI1Reset();
 	Spi1Init16bit();
-	SetPInPullUp(RFM12B_IRQ_PORT, RFM12B_IRQ_PIN_NB);
+//	SetPInPullUp(RFM12B_IRQ_PORT, RFM12B_IRQ_PIN_NB);
+	GPIOF->MODER |= GPIO_MODER_MODER1_0;
+
+
 }
 
 
 
 uint16_t Rfm12bWriteCmd( uint16_t cmd )
 {
-	NSEL_RFM12_LOW;
-	uint8_t recData = Spi1Transmit16bit(cmd);
+  	NSEL_RFM12_LOW;
+	uint16_t recData = Spi1Transmit16bit(cmd);
 	NSEL_RFM12_HIGH;
 	return recData;
 

@@ -16,7 +16,7 @@ extern "C" {
 
 void SetPInPullUp (GPIO_TypeDef * gpioPort, uint8_t GPIOPinNB);
 void SetGpioA0AsExtiFall (void);
-
+void SetPinOut (GPIO_TypeDef * gpioPort, uint8_t pinNB);
 #ifdef __cplusplus
 }
 #endif
