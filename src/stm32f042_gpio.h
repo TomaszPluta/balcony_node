@@ -14,9 +14,13 @@ extern "C" {
 
 #include "stm32f0xx.h"
 
-void SetPInPullUp (GPIO_TypeDef * gpioPort, uint8_t GPIOPinNB);
+void SetPort_Enable (GPIO_TypeDef * gpioPort);
+void SetPin_PullUp (GPIO_TypeDef * gpioPort, uint8_t GPIOPinNB);
+void SetPin_AsOutput (GPIO_TypeDef * gpioPort, uint8_t pinNB);
+void SetPin_AsInput (GPIO_TypeDef * gpioPort, uint8_t pinNB);
+
 void SetGpioA0AsExtiFall (void);
-void SetPinOut (GPIO_TypeDef * gpioPort, uint8_t pinNB);
+
 #ifdef __cplusplus
 }
 #endif

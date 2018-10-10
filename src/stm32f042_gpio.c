@@ -7,26 +7,48 @@
 #include "stm32f0xx.h"
 
 
-void SetPInPullUp (GPIO_TypeDef * gpioPort, uint8_t pinNB){
+void SetPin_PullUp (GPIO_TypeDef * gpioPort, uint8_t pinNB){
 	const uint8_t pupdrPullUp = 0x1U;
 	gpioPort->PUPDR |= (pupdrPullUp << (pinNB*2));
 	gpioPort->ODR |= (1 << pinNB);
 }
 
 
-
-void SetGpioA0AsExtiFall (void){
-	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
-	SYSCFG->EXTICR[1] &= (uint16_t)~SYSCFG_EXTICR1_EXTI0_PA;
-	EXTI->IMR = 0x0001;
-	EXTI->FTSR = 0x0001;
+void SetPin_AsOutput (GPIO_TypeDef * gpioPort, uint8_t pinNB){
+	const uint8_t moderOut = 0x1U;
+	const uint8_t moderOutSize = 0x2U;
+	gpioPort->MODER |= (moderOut << (pinNB * moderOutSize));
 }
 
 
+void SetPin_AsInput (GPIO_TypeDef * gpioPort, uint8_t pinNB){
+	const uint8_t moderInMask = 0x2U;
+	const uint8_t moderInMaskSize = 0x2U;
+	gpioPort->MODER &= ~(moderInMask << (pinNB * moderInMaskSize));
+}
 
-void SetPinOut (GPIO_TypeDef * gpioPort, uint8_t pinNB){
-	const uint8_t moderOut = 0x1U;
-	gpioPort->MODER |= (moderOut << (pinNB*2));
+
+void SetPort_Enable (GPIO_TypeDef * gpioPort){
+	if (gpioPort == GPIOA){
+		RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
+	}
+	if (gpioPort == GPIOB){
+		RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
+	}
+	if (gpioPort == GPIOC){
+		RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
+	}
+	if (gpioPort == GPIOF){
+		RCC->AHBENR |= RCC_AHBENR_GPIOFEN;
+	}
+}
+
+
+void SetGpioA0AsExtiFall (void){
+	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;//////////////////////////////
+	SYSCFG->EXTICR[1] &= (uint16_t)~SYSCFG_EXTICR1_EXTI0_PA;
+	EXTI->IMR = 0x0001;
+	EXTI->FTSR = 0x0001;
 }
 
 

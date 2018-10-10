@@ -201,8 +201,8 @@ int main(void)
 
 	/*led init*/
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
-	SetPinOut(GPIOA, 3);
-	SetPInPullUp(GPIOA, 3);
+	SetPin_AsOutput(GPIOA, 3);
+	SetPin_PullUp(GPIOA, 3);
 	GPIOA->ODR |= (1 << 3);
 
 
@@ -213,7 +213,7 @@ int main(void)
  	Rfm12bWriteCmd(0x0000);
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 	SetGpioA0AsExtiFall();
-	SetPInPullUp(RFM12B_IRQ_PORT, RFM12B_IRQ_PIN_NB);
+	SetPin_PullUp(RFM12B_IRQ_PORT, RFM12B_IRQ_PIN_NB);
 
 
  	rfm12bFifoReset();
@@ -226,14 +226,25 @@ int main(void)
 //	uint8_t buff[] = "abcdefghijabcdefghijabcdefghij";
 //	Rfm12bStartSending(&rfm12bObj, buff, 30, 1);
 
+ 	SetPort_Enable(GPIOB);
+ 	SetPin_AsInput(GPIOB, 1);
+ 	SetPin_PullUp(GPIOB, 1);
 
-while (1);
+while (1){
 
 
 
 
+ if (!(GPIOB->IDR & (1<<1))){
+	  uint8_t buff[] = "abcdefghijabcdefghijabcdefghij";
+	  Rfm12bStartSending(&rfm12bObj, buff, 30, 2);
+	 _delay_ms(250);
 
 
+ }
+
+
+}
 
 
 }
