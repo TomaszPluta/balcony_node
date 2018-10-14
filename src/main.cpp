@@ -35,7 +35,10 @@ SOFTWARE.
 #include "stm32f042_gpio.h"
 #include "__rfm12b_platform.h"
 #include "__rfm12b.h"
-
+#include "ring_buff.h"
+#include "mqtt_client.h"
+#include "mqtt_packet.h"
+#include "mqtt_socket.h"
 /**
 **===========================================================================
 **
@@ -127,6 +130,35 @@ extern "C" {
 #endif
 
 
+
+volatile uint8_t rxBuff[1024];
+volatile uint16_t pos;
+volatile bool rx_flag;
+volatile uint32_t systickMsIRQ;
+volatile ringBuff_t ringBuff;
+
+
+#define BROKER_ADDR		(1)
+#define NODE_ADDR		(2)
+
+
+
+void StartSystick(void){
+	SysTick_Config(SystemCoreClock/1000);
+}
+
+
+void SysTick_Handler(void){
+	systickMsIRQ++;
+}
+
+
+
+uint32_t GetTickCount(void){
+	 return systickMsIRQ;
+}
+
+
 void EXTI0_1_IRQHandler (void){
 	GPIOA->ODR ^= (1 << 3);
 	NVIC_ClearPendingIRQ(EXTI0_1_IRQn);
@@ -149,6 +181,59 @@ void EXTI0_1_IRQHandler (void){
  		while(i--);
  	}
  }
+
+
+
+
+
+ uint8_t client_rec(void * context, uint8_t * buf, uint8_t buf_len);
+
+ int mqtt_message_cb(struct _MqttClient *client, MqttMessage *message, byte msg_new, byte msg_done){
+ 	return 1;
+ }
+
+ int mqt_net_connect_cb (void *context, const char* host, word16 port, int timeout_ms){
+ 	return 1;
+ }
+
+ int mqtt_net_read_cb(void *context, byte* buf, int buf_len, int timeout_ms){
+ 	uint32_t enterTimestamp = GetTickCount();
+ 	while (GetTickCount() - enterTimestamp < timeout_ms){
+ 		uint8_t rxNb = RingBufferRead(&ringBuff, (uint8_t *)buf, buf_len);
+ 		if (rxNb >0){
+ 			return rxNb;
+ 		}
+ 	}
+ 	return -1;
+ }
+
+ int mqtt_net_write_cb(void *context, const byte* buff, int buffLen, int timeout_ms){
+
+ 	rfm12bObj_t * obj = (rfm12bObj_t*) context;
+ 	Rfm12bStartSending(obj, (uint8_t *)buff, buffLen, BROKER_ADDR);
+ 	return buffLen;
+ }
+
+
+ int mqtt_net_disconnect_cb(void *context){
+ 	return 0;
+ }
+
+
+
+
+ uint8_t radio_receive (rfm12bObj_t* rfm12b, ringBuff_t * ringBuff){
+ 	//here check if address we receive is our address and check who send this message
+ 	uint8_t byteNb = 0;
+ 		byteNb = rfm12b->completedRxBuff.dataNb;
+ 		if (byteNb > 0){
+ 			byteNb = (byteNb < R_BUFF_SIZE) ? byteNb : R_BUFF_SIZE;
+ 			RingBufferWrite(ringBuff,  &rfm12b->completedRxBuff.data, byteNb);
+ 			rfm12b->completedRxBuff.dataNb = 0;
+ 		}
+ 	return byteNb;
+ }
+
 
 
 
@@ -227,9 +312,49 @@ int main(void)
  	SetPin_AsInput(GPIOF, 0);
  	SetPin_PullUp(GPIOF, 0);
 
+
+
+
+		MqttConnect mqtt_con;
+		mqtt_con.clean_session =0;
+		mqtt_con.client_id = "rt1";
+		mqtt_con.enable_lwt = 0;
+		mqtt_con.keep_alive_sec = 30;
+		mqtt_con.stat = MQTT_MSG_BEGIN;
+		mqtt_con.username ="bedroomTMP1";
+		mqtt_con.password = "passw0rd";
+		MqttClient_Connect(&client, &mqtt_con);
+
+//		const char* topicTemp = "flat/balcony/temp/1";
+//		const char* topicPress = "flat/balcony/press/1";
+//		const char* topicLight= "flat/balcony/light/1";
+
+		const char* balconyConf = "flat/config/balcony";
+		const char* globalConf = "flat/config/global";
+
+		MqttTopic topics[2];
+		topics[0].qos =1;
+		topics[0].topic_filter = balconyConf;
+	    topics[1].qos =1;
+		topics[1].topic_filter = balconyConf;
+
+		MqttSubscribe subscribe;
+		subscribe.packet_id = 1;
+		uint8_t topic_count = 2;
+		subscribe.topic_count = topic_count;
+		subscribe.topics = topics;
+		subscribe.stat = MQTT_MSG_BEGIN;
+		MqttClient_Subscribe(&client, &subscribe);
+
+
+		StartSystick();
+
+
 while (1){
 
 
+
+	 radio_receive (&rfm12bObj, &ringBuff);
 
 
  if (!(GPIOF->IDR & (1<<0))){
