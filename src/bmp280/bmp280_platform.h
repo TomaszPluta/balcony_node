@@ -14,8 +14,8 @@
 extern "C" {
 #endif
 
-#define bmp280_CSN_L()              (GPIOF->ODR &= ~(1<<0))
-#define bmp280_CSN_H()              (GPIOF->ODR |= (1<<0))
+#define bmp280_CSN_L()              (GPIOB->ODR &= ~(1<<1))
+#define bmp280_CSN_H()              (GPIOB->ODR |= (1<<1))
 #define SPI_BUFFER_LEN 				64
 #define BUFFER_LENGTH				0xFF
 #define	SPI_READ					0x80

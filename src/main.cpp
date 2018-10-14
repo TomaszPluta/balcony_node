@@ -157,47 +157,48 @@ int main(void)
 	SystemCoreClockUpdate();
 	GpioInitForSpi1();
 
-//	Spi1Init8bit();
-//	bmp280_init_Csn();
-//
-//	bmp280_assign_SPI(&bmp280);
-//
-//	uint8_t v_data_u8;
-//
-//	bmp280_init(&bmp280);
-//
-//	signed long temperature;
-//	signed long pressure;
-//
-//	signed long temp_out;
-//	signed long press_out;
-//
-//
-//
-//	bmp280_set_oversamp_temperature(3);
-//	bmp280_set_oversamp_pressure(3);
-//
-//	uint8_t powerMode;
-//
-//
-//	bmp280_set_power_mode(0);
-//	bmp280_get_power_mode(&powerMode);
-//
-//	bmp280_read_uncomp_temperature(&temperature);
-//	temp_out = bmp280_compensate_temperature_int32(temperature);
-//
-//	bmp280_read_uncomp_pressure(&pressure);
-//	press_out = bmp280_compensate_pressure_int32(pressure);
-//
-//
-//	bmp280_set_power_mode(3);
-//	bmp280_get_power_mode(&powerMode);
-//
-//	bmp280_read_uncomp_temperature(&temperature);
-//	temp_out = bmp280_compensate_temperature_int32(temperature);
-//
-//	bmp280_read_uncomp_pressure(&pressure);
-//	press_out = bmp280_compensate_pressure_int32(pressure);
+	Spi1Init8bit();
+	bmp280_init_Csn();
+
+	bmp280_assign_SPI(&bmp280);
+
+	uint8_t v_data_u8;
+
+	bmp280_init(&bmp280);
+
+	signed long temperature;
+	signed long pressure;
+
+	signed long temp_out;
+	signed long press_out;
+
+
+
+	bmp280_set_oversamp_temperature(3);
+	bmp280_set_oversamp_pressure(3);
+
+	uint8_t powerMode;
+
+
+	bmp280_set_power_mode(0);
+	bmp280_get_power_mode(&powerMode);
+
+	bmp280_read_uncomp_temperature(&temperature);
+	temp_out = bmp280_compensate_temperature_int32(temperature);
+
+	bmp280_read_uncomp_pressure(&pressure);
+	press_out = bmp280_compensate_pressure_int32(pressure);
+
+
+	bmp280_set_power_mode(3);
+	bmp280_get_power_mode(&powerMode);
+
+	bmp280_read_uncomp_temperature(&temperature);
+	temp_out = bmp280_compensate_temperature_int32(temperature);
+
+	bmp280_read_uncomp_pressure(&pressure);
+	press_out = bmp280_compensate_pressure_int32(pressure);
+
 
 	/*led init*/
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
@@ -209,7 +210,6 @@ int main(void)
 
 
  	Rfm12bInit();
- 	_delay_ms(1000);	//wymagane opoznienie
  	Rfm12bWriteCmd(0x0000);
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 	SetGpioA0AsExtiFall();
@@ -222,26 +222,42 @@ int main(void)
  	Rrm12bObjInit (&rfm12bObj, NODE_ADDR);
 
 
-//
-//	uint8_t buff[] = "abcdefghijabcdefghijabcdefghij";
-//	Rfm12bStartSending(&rfm12bObj, buff, 30, 1);
 
- 	SetPort_Enable(GPIOB);
- 	SetPin_AsInput(GPIOB, 1);
- 	SetPin_PullUp(GPIOB, 1);
+ 	SetPort_Enable(GPIOF);
+ 	SetPin_AsInput(GPIOF, 0);
+ 	SetPin_PullUp(GPIOF, 0);
 
 while (1){
 
 
 
 
- if (!(GPIOB->IDR & (1<<1))){
-	  uint8_t buff[] = "abcdefghijabcdefghijabcdefghij";
-	  Rfm12bStartSending(&rfm12bObj, buff, 30, 2);
+ if (!(GPIOF->IDR & (1<<0))){
+
+	SPI1Reset();
+	Spi1Init8bit();
+
+
+ 	bmp280_read_uncomp_temperature(&temperature);
+ 	temp_out = bmp280_compensate_temperature_int32(temperature);
+
+ 	bmp280_read_uncomp_pressure(&pressure);
+ 	press_out = bmp280_compensate_pressure_int32(pressure);
+
+
+
+ 	 Rfm12bSpiInit();
+//	  uint8_t buff[] = "abcdefghijabcdefghijabcdefghij";
+//	  Rfm12bStartSending(&rfm12bObj, buff, 30, 2);
 	 _delay_ms(250);
 
 
  }
+
+
+
+
+
 
 
 }
