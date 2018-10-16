@@ -95,7 +95,7 @@ volatile ringBuff_t ringBuff;
 #define BROKER_ADDR		(1)
 #define NODE_ADDR		(2)
 
-
+uint8_t radio_receive (volatile rfm12bObj_t* rfm12b, volatile ringBuff_t * ringBuff);
 
 void StartSystick(void){
 	SysTick_Config(SystemCoreClock/1000);
@@ -118,6 +118,8 @@ void EXTI0_1_IRQHandler (void){
 	NVIC_ClearPendingIRQ(EXTI0_1_IRQn);
 	Rfm12bIrqCallback(&rfm12bObj);
 	EXTI->PR |= EXTI_PR_PR0;
+	radio_receive (&rfm12bObj, &ringBuff);
+
 }
 
 #ifdef __cplusplus
@@ -193,6 +195,10 @@ void EXTI0_1_IRQHandler (void){
 
 int main(void)
 {
+
+	StartSystick();
+
+
 	SystemCoreClockUpdate();
 	GpioInitForSpi1();
 
@@ -301,7 +307,7 @@ int main(void)
 		topics[0].qos = MQTT_QOS_1;
 		topics[0].topic_filter = balconyConf;
 	    topics[1].qos = MQTT_QOS_1;
-		topics[1].topic_filter = balconyConf;
+		topics[1].topic_filter = globalConf;
 
 		MqttSubscribe subscribe;
 		subscribe.packet_id = 1;
@@ -312,14 +318,13 @@ int main(void)
 		MqttClient_Subscribe(&client, &subscribe);
 
 
-		StartSystick();
+
 
 
 while (1){
 
 
 
-	 radio_receive (&rfm12bObj, &ringBuff);
 
 
  if (!(GPIOF->IDR & (1<<0))){
