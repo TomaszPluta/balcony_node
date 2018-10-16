@@ -26,8 +26,8 @@ typedef struct {
 
 
 void RingBufferInit (volatile ringBuff_t * r_buff);
-void RingBufferWrite (volatile ringBuff_t * r_buff, uint8_t * data, uint16_t amount);
-uint16_t RingBufferRead (volatile ringBuff_t * r_buff, uint8_t * data, uint16_t amount);
+void RingBufferWrite (volatile ringBuff_t * r_buff, volatile uint8_t * data, uint16_t amount);
+uint16_t RingBufferRead (volatile ringBuff_t * ringBuff, volatile uint8_t * data, uint16_t amount);
 
 
 #ifdef __cplusplus

@@ -39,6 +39,9 @@ SOFTWARE.
 #include "mqtt_client.h"
 #include "mqtt_packet.h"
 #include "mqtt_socket.h"
+
+#include "systemDefines.h"
+
 /**
 **===========================================================================
 **
@@ -70,55 +73,6 @@ SOFTWARE.
 #define SW_RESET (uint16_t)0b1111111000000000
 
 
-//
-//		if (status & M_TX_READY){
-//			asm volatile ("nop");
-//		}
-//		if (status & M_POR){
-//			asm volatile ("nop");
-//		}
-//		if (status & M_TX_OVF){
-//			asm volatile ("nop");
-//		}
-//		if (status & M_FIFO_OVF){
-//			asm volatile ("nop");
-//		}
-//		if (status & M_WKUP_OVF){
-//			asm volatile ("nop");
-//		}
-//		if (status & M_EXT_INT){
-//			asm volatile ("nop");
-//		}
-//		if (status & M_BOD){
-//			asm volatile ("nop");
-//		}
-//		if (status & M_FIFO_EMP){
-//			asm volatile ("nop");
-//		}
-//		if (status & M_ATS_OK){
-//			asm volatile ("nop");
-//		}
-//		if (status & M_RSSI_OK){
-//			asm volatile ("nop");
-//		}
-//		if (status & M_DQD_OK){
-//			asm volatile ("nop");
-//		}
-//		if (status & M_CLK_RECOV){
-//			asm volatile ("nop");
-//		}
-//		if (status & M_ACF_TGL){
-//			asm volatile ("nop");
-//		}
-//		if (status & M_F_OFS_SIG){
-//			asm volatile ("nop");
-//		}
-//		if (status & M_F_OFS){
-//			asm volatile ("nop");
-//		}
-//
-//
-
 
 volatile rfm12bObj_t rfm12bObj;
 struct bmp280_t bmp280;
@@ -131,7 +85,7 @@ extern "C" {
 
 
 
-volatile uint8_t rxBuff[1024];
+volatile uint8_t rxBuff[512];
 volatile uint16_t pos;
 volatile bool rx_flag;
 volatile uint32_t systickMsIRQ;
@@ -222,13 +176,13 @@ void EXTI0_1_IRQHandler (void){
 
 
 
- uint8_t radio_receive (rfm12bObj_t* rfm12b, ringBuff_t * ringBuff){
+ uint8_t radio_receive (volatile rfm12bObj_t* rfm12b, volatile ringBuff_t * ringBuff){
  	//here check if address we receive is our address and check who send this message
  	uint8_t byteNb = 0;
  		byteNb = rfm12b->completedRxBuff.dataNb;
  		if (byteNb > 0){
  			byteNb = (byteNb < R_BUFF_SIZE) ? byteNb : R_BUFF_SIZE;
- 			RingBufferWrite(ringBuff,  &rfm12b->completedRxBuff.data, byteNb);
+ 			RingBufferWrite(ringBuff, rfm12b->completedRxBuff.data, byteNb);
  			rfm12b->completedRxBuff.dataNb = 0;
  		}
  	return byteNb;
@@ -313,6 +267,17 @@ int main(void)
  	SetPin_PullUp(GPIOF, 0);
 
 
+		MqttNet net;
+		MqttClient client;
+		net.context = (void*)&rfm12bObj;
+		net.connect = mqt_net_connect_cb;
+		net.read = mqtt_net_read_cb;
+		net.write = mqtt_net_write_cb;
+		net.disconnect = mqtt_net_disconnect_cb;
+
+		uint8_t tx_buf[BUF_SIZE_TX];
+		uint8_t rx_buf[BUF_SIZE_RX];
+		MqttClient_Init(&client, &net, mqtt_message_cb, tx_buf, BUF_SIZE_TX, rx_buf, BUF_SIZE_RX, CMD_TIMEOUT_MS);
 
 
 		MqttConnect mqtt_con;
@@ -333,9 +298,9 @@ int main(void)
 		const char* globalConf = "flat/config/global";
 
 		MqttTopic topics[2];
-		topics[0].qos =1;
+		topics[0].qos = MQTT_QOS_1;
 		topics[0].topic_filter = balconyConf;
-	    topics[1].qos =1;
+	    topics[1].qos = MQTT_QOS_1;
 		topics[1].topic_filter = balconyConf;
 
 		MqttSubscribe subscribe;

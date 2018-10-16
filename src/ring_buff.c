@@ -14,7 +14,7 @@ void RingBufferInit (volatile ringBuff_t * ringBuff){
 }
 
 
-void RingBufferWrite (volatile ringBuff_t * ringBuff, uint8_t * data, uint16_t amount)
+void RingBufferWrite (volatile ringBuff_t * ringBuff, volatile uint8_t * data, uint16_t amount)
 {
 	while (amount--){
 		ringBuff->buffer[ringBuff->head++] = *data++;
@@ -25,7 +25,7 @@ void RingBufferWrite (volatile ringBuff_t * ringBuff, uint8_t * data, uint16_t a
 }
 
 
-uint16_t RingBufferRead (volatile ringBuff_t * ringBuff, uint8_t * data, uint16_t amount)
+uint16_t RingBufferRead (volatile ringBuff_t * ringBuff, volatile uint8_t * data, uint16_t amount)
 {
 	uint16_t just_read = 0;
 	uint16_t to_read=0;
