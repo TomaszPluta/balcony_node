@@ -31,8 +31,9 @@ SOFTWARE.
 #include <bmp280_platform.h>
 #include "stm32f0xx.h"
 #include "stm32f042_spi.h"
-#include "bmp280.h"
 #include "stm32f042_gpio.h"
+#include "stm32f042_rtc.h"
+#include "bmp280.h"
 #include "__rfm12b_platform.h"
 #include "__rfm12b.h"
 #include "ring_buff.h"
@@ -193,11 +194,18 @@ void EXTI0_1_IRQHandler (void){
 
 
 
+
+
+
+
+
 int main(void)
 {
 
 	StartSystick();
 
+
+	RtcInit();
 
 	SystemCoreClockUpdate();
 	GpioInitForSpi1();
