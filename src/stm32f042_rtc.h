@@ -21,6 +21,8 @@ void RtcUnlock(void);
 
 void RtcInit(void);
 
+void RtcSetAlarmEveryMinute();
+void BSP_RTC_EXTI_Init();
 
 #ifdef __cplusplus
 }

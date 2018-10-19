@@ -123,6 +123,20 @@ void EXTI0_1_IRQHandler (void){
 
 }
 
+
+
+
+
+
+void RTC_IRQHandler (void){
+	RTC->ISR &= ~RTC_ISR_ALRAF;
+
+			// Clear EXTI pending bit also
+			EXTI->PR |= EXTI_PR_PR17;
+
+	GPIOA->ODR ^= (1 << 3);
+}
+
 #ifdef __cplusplus
 }
 #endif
@@ -204,8 +218,9 @@ int main(void)
 
 	StartSystick();
 
-
+	BSP_RTC_EXTI_Init();
 	RtcInit();
+	RtcSetAlarmEveryMinute();
 
 	SystemCoreClockUpdate();
 	GpioInitForSpi1();
@@ -328,7 +343,7 @@ int main(void)
 
 
 
-
+//http://pomad.fr/node/37
 while (1){
 
 

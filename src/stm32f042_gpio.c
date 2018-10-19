@@ -47,8 +47,8 @@ void SetPort_Enable (GPIO_TypeDef * gpioPort){
 void SetGpioA0AsExtiFall (void){
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;//////////////////////////////
 	SYSCFG->EXTICR[1] &= (uint16_t)~SYSCFG_EXTICR1_EXTI0_PA;
-	EXTI->IMR = 0x0001;
-	EXTI->FTSR = 0x0001;
+	EXTI->IMR |= 0x0001;
+	EXTI->FTSR |= 0x0001;
 }
 
 
