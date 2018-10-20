@@ -120,7 +120,6 @@ void EXTI0_1_IRQHandler (void){
 	Rfm12bIrqCallback(&rfm12bObj);
 	EXTI->PR |= EXTI_PR_PR0;
 	radio_receive (&rfm12bObj, &ringBuff);
-
 }
 
 
@@ -130,11 +129,7 @@ void EXTI0_1_IRQHandler (void){
 
 void RTC_IRQHandler (void){
 	RTC->ISR &= ~RTC_ISR_ALRAF;
-
-			// Clear EXTI pending bit also
-			EXTI->PR |= EXTI_PR_PR17;
-
-	GPIOA->ODR ^= (1 << 3);
+	EXTI->PR |= EXTI_PR_PR17;
 }
 
 #ifdef __cplusplus
@@ -341,47 +336,28 @@ int main(void)
 		MqttClient_Subscribe(&client, &subscribe);
 
 
+		SysTick->CTRL &= ~ SysTick_CTRL_ENABLE_Msk;
 
+		while (1){
+			if (RTC->ISR & RTC_ISR_ALRAF){
+				RTC->ISR &= ~RTC_ISR_ALRAF;
+				GPIOA->ODR ^= (1 << 3);
+				SPI1Reset();
+				Spi1Init8bit();
 
+				bmp280_read_uncomp_temperature(&temperature);
+				temp_out = bmp280_compensate_temperature_int32(temperature);
+
+				bmp280_read_uncomp_pressure(&pressure);
+				press_out = bmp280_compensate_pressure_int32(pressure);
+
+				Rfm12bSpiInit();
+			}
+			__WFI();
+		}
+		//	}
+}
 //http://pomad.fr/node/37
-while (1){
-
-
-
-
-
- if (!(GPIOF->IDR & (1<<0))){
-
-	SPI1Reset();
-	Spi1Init8bit();
-
-
- 	bmp280_read_uncomp_temperature(&temperature);
- 	temp_out = bmp280_compensate_temperature_int32(temperature);
-
- 	bmp280_read_uncomp_pressure(&pressure);
- 	press_out = bmp280_compensate_pressure_int32(pressure);
-
-
-
- 	 Rfm12bSpiInit();
-//	  uint8_t buff[] = "abcdefghijabcdefghijabcdefghij";
-//	  Rfm12bStartSending(&rfm12bObj, buff, 30, 2);
-	 _delay_ms(250);
-
-
- }
-
-
-
-
-
-
-
-}
-
-
-}
 
 
 
