@@ -28,7 +28,8 @@ SOFTWARE.
 */
 
 /* Includes */
-#include <bmp280_platform.h>
+#include "string.h"
+#include "bmp280_platform.h"
 #include "stm32f0xx.h"
 #include "stm32f042_spi.h"
 #include "stm32f042_gpio.h"
@@ -51,28 +52,13 @@ SOFTWARE.
 **===========================================================================
 */
 
-#define NODE_ADDR		(2)
+#define NODE_ADDR					(2)
+#define MAX_PUBLISH_BUFF_SIZE		(32)
 
-
-#define M_TX_READY  (uint16_t)0b1000000000000000
-#define M_FIFO_IT   (uint16_t)0b1000000000000000
-#define M_POR       (uint16_t)0b0100000000000000
-#define M_TX_OVF    (uint16_t)0b0010000000000000
-#define M_FIFO_OVF  (uint16_t)0b0010000000000000
-#define M_WKUP_OVF  (uint16_t)0b0001000000000000
-#define M_EXT_INT   (uint16_t)0b0000100000000000
-#define M_BOD       (uint16_t)0b0000010000000000
-#define M_FIFO_EMP  (uint16_t)0b0000001000000000
-#define M_ATS_OK    (uint16_t)0b0000000100000000
-#define M_RSSI_OK   (uint16_t)0b0000000100000000
-#define M_DQD_OK    (uint16_t)0b0000000010000000
-#define M_CLK_RECOV (uint16_t)0b0000000001000000
-#define M_ACF_TGL   (uint16_t)0b0000000000100000
-#define M_F_OFS_SIG (uint16_t)0b0000000000010000
-#define M_F_OFS     (uint16_t)0b0000000000001111
 
 #define SW_RESET (uint16_t)0b1111111000000000
 
+#define TOGGLE_LED()	(GPIOA->ODR ^= (1 << 3))
 
 
 volatile rfm12bObj_t rfm12bObj;
@@ -128,7 +114,8 @@ void EXTI0_1_IRQHandler (void){
 
 
 void RTC_IRQHandler (void){
-	RTC->ISR &= ~RTC_ISR_ALRAF;
+//	RTC->ISR &= ~RTC_ISR_ALRAF;
+
 	EXTI->PR |= EXTI_PR_PR17;
 }
 
@@ -314,9 +301,7 @@ int main(void)
 		mqtt_con.password = "passw0rd";
 		MqttClient_Connect(&client, &mqtt_con);
 
-//		const char* topicTemp = "flat/balcony/temp/1";
-//		const char* topicPress = "flat/balcony/press/1";
-//		const char* topicLight= "flat/balcony/light/1";
+
 
 		const char* balconyConf = "flat/config/balcony";
 		const char* globalConf = "flat/config/global";
@@ -337,11 +322,12 @@ int main(void)
 
 
 		SysTick->CTRL &= ~ SysTick_CTRL_ENABLE_Msk;
-
+		uint32_t pckt_count;
 		while (1){
 			if (RTC->ISR & RTC_ISR_ALRAF){
 				RTC->ISR &= ~RTC_ISR_ALRAF;
-				GPIOA->ODR ^= (1 << 3);
+				TOGGLE_LED();
+
 				SPI1Reset();
 				Spi1Init8bit();
 
@@ -352,7 +338,29 @@ int main(void)
 				press_out = bmp280_compensate_pressure_int32(pressure);
 
 				Rfm12bSpiInit();
+
+
+
+
+				MqttPublish publish;
+				//uint8_t publishBuffer[MAX_PUBLISH_BUFF_SIZE];
+				char * publishBuffer = "XXpublishXX";
+				publish.buffer = (uint8_t*) publishBuffer;
+				publish.total_len = 16;
+				publish.duplicate = 0;
+				publish.packet_id = 0;
+				publish.qos = MQTT_QOS_0;
+				publish.retain =0;
+				publish.stat = MQTT_MSG_BEGIN;
+				const char* topicTemp = "flat/balcony/temp/1";
+				publish.topic_name = topicTemp;
+				publish.topic_name_len = strlen(topicTemp);
+				MqttClient_Publish(&client, &publish);
+
+
 			}
+
+
 			__WFI();
 		}
 		//	}
@@ -378,63 +386,3 @@ int main(void)
 
 
 
-
-
-
-
-
-
-
-
-
-//
-//	SetGpioA0AsExtiFall();
-// 	Rfm12bWriteCmd(SW_RESET);
-// 	Rfm12bInit();
-// 	uint16_t status;
-// 	status= Rfm12bWriteCmd(0x0000);
-// 	Rrm12bObjInit (&rfm12b, 2);
-// 	rfm12bFifoReset();
-// 	rfm12bSwitchRx();
-// 	uint16_t sst3 =   Rfm12bWriteCmd(0x0000);
-//	NVIC_EnableIRQ(EXTI0_1_IRQn);
-//
-//
-//
-//
-//
-////
-////	  uint8_t buff[] = "abcdefghijabcdefghijabcdefghij";
-////		 			  Rfm12bStartSending(&rfm12b, buff, 30, 2);
-////
-//
-////	  uint8_t buff[] = "abcdefghijabcdefghijabcdefghij";
-////	  Rfm12bStartSending(&rfm12b, buff, 30, 1);
-//
-//  while (1)
-//  {
-//////
-//////	  uint16_t status = Rfm12bWriteCmd(0x0000);
-//////
-//////	  	if (status & RFM12_STATUS_FFIT ){
-//////	  		if (rfm12b.state == transmit){
-//////	  			Rfm12bMantainSending(&rfm12b);
-//////	  		}
-//////	  		else{
-//////	  			Rfm12bMantainreceiving(&rfm12b);
-//////	  		}
-//////	  	}
-////
-////	  	for (uint16_t i =0; i < 0xFFF; i++)
-////	  	{
-////	  		asm volatile ("nop");
-////	  	}
-////
-////	   uint8_t rxb = rfm12bRecv();
-////	   if (rxb){
-////		   asm volatile ("nop");
-////  }
-////  }
-//}
-//}
-//}
