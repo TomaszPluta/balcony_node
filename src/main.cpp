@@ -151,7 +151,7 @@ void RTC_IRQHandler (void){
 
  int mqtt_net_read_cb(void *context, byte* buf, int buf_len, int timeout_ms){
  	uint32_t enterTimestamp = GetTickCount();
- 	while (GetTickCount() - enterTimestamp < timeout_ms){
+ 	while (GetTickCount() - enterTimestamp < (uint32_t) timeout_ms){
  		uint8_t rxNb = RingBufferRead(&ringBuff, (uint8_t *)buf, buf_len);
  		if (rxNb >0){
  			return rxNb;
@@ -202,9 +202,9 @@ int main(void)
 
 	BSP_RTC_EXTI_Init();
 	RtcInit();
-	RtcSetAlarmEveryMinute();
-
+//	RtcSetAlarmEveryMinute();
 	SystemCoreClockUpdate();
+	RtcSetAlarmEveryGivenMinutes(2);
 	GpioInitForSpi1();
 
 	Spi1Init8bit();
@@ -326,6 +326,7 @@ int main(void)
 		while (1){
 			if (RTC->ISR & RTC_ISR_ALRAF){
 				RTC->ISR &= ~RTC_ISR_ALRAF;
+				RtcSetAlarmEveryGivenMinutes(2);
 				TOGGLE_LED();
 
 				SPI1Reset();
@@ -354,14 +355,14 @@ int main(void)
 				publish.stat = MQTT_MSG_BEGIN;
 				const char* topicTemp = "flat/balcony/temp/1";
 				publish.topic_name = topicTemp;
-				publish.topic_name_len = strlen(topicTemp);
+				publish.topic_name_len = 32;
 				MqttClient_Publish(&client, &publish);
 
 
 			}
 
-
 			__WFI();
+
 		}
 		//	}
 }

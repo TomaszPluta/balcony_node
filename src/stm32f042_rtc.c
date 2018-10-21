@@ -43,7 +43,7 @@ void RtcInit(void){
 		timeout--;
 	}
 	RTC->PRER = RTC_PRESCALER;
-	RTC->TR = RTC_TR_PM | 10;
+	RTC->TR =0;
 	RTC->ISR &=~ RTC_ISR_INIT;
 	RtcUnlock();
 }
@@ -64,7 +64,81 @@ void RtcSetAlarmEveryMinute(){
 		timeout--;
 	}
 
-	RTC->ALRMAR |= RTC_ALRMAR_MSK4 | RTC_ALRMAR_MSK3 | RTC_ALRMAR_MSK1;
+	RTC->ALRMAR |= RTC_ALRMAR_MSK4 | RTC_ALRMAR_MSK3 | RTC_ALRMAR_MSK2;
+	RTC->CR |= RTC_CR_ALRAE;
+	RTC->CR |= RTC_CR_ALRAIE;
+	RtcLock();
+	NVIC_EnableIRQ(RTC_IRQn);
+}
+
+
+void RtcSetAlarmEveryGivenSeconds(uint8_t seconds){
+	RtcUnlock();
+	RTC->CR &= ~(RTC_CR_ALRAE);
+	RTC->ISR &= ~(RTC_ISR_ALRAWF);
+	RTC->ALRMAR =0;
+
+	uint8_t secondsUnits = seconds % 10;
+	RTC->ALRMAR |=  secondsUnits << RTC_ALRMAR_SU_Pos;
+	uint8_t secondsTens = seconds / 10;
+	RTC->ALRMAR |=  secondsTens << RTC_ALRMAR_ST_Pos;
+
+	uint8_t timeout = 0xFF;
+	while ((RTC->ISR & RTC_ISR_ALRAWF)  && (timeout > 0))
+	{
+		timeout--;
+	}
+	RTC->ALRMAR |= RTC_ALRMAR_MSK4 | RTC_ALRMAR_MSK3 | RTC_ALRMAR_MSK2;
+
+	RTC->ISR |= RTC_ISR_INIT;
+	timeout = 0xFF;
+	while ((RTC->ISR & RTC_ISR_INITF) && (timeout > 0))
+	{
+		timeout--;
+	}
+	RTC->TR =0;
+	RTC->ISR &=~ RTC_ISR_INIT;
+	RtcUnlock();
+
+
+	RTC->CR |= RTC_CR_ALRAE;
+	RTC->CR |= RTC_CR_ALRAIE;
+	RtcLock();
+	NVIC_EnableIRQ(RTC_IRQn);
+}
+
+
+
+
+void RtcSetAlarmEveryGivenMinutes(uint8_t minutes){
+	RtcUnlock();
+	RTC->CR &= ~(RTC_CR_ALRAE);
+	RTC->ISR &= ~(RTC_ISR_ALRAWF);
+	RTC->ALRMAR =0;
+
+	uint8_t minutesUnits = minutes % 10;
+	RTC->ALRMAR |=  minutesUnits << RTC_ALRMAR_MNU_Pos;
+	uint8_t minutesTens = minutes / 10;
+	RTC->ALRMAR |=  minutesTens << RTC_ALRMAR_MNT_Pos;
+
+	uint8_t timeout = 0xFF;
+	while ((RTC->ISR & RTC_ISR_ALRAWF) && (timeout > 0))
+	{
+		timeout--;
+	}
+	RTC->ALRMAR |= RTC_ALRMAR_MSK4 | RTC_ALRMAR_MSK3;
+
+	RTC->ISR |= RTC_ISR_INIT;
+	timeout = 0xFF;
+	while ((RTC->ISR & RTC_ISR_INITF) && (timeout > 0))
+	{
+		timeout--;
+	}
+	RTC->TR =0;
+	RTC->ISR &=~ RTC_ISR_INIT;
+	RtcUnlock();
+
+
 	RTC->CR |= RTC_CR_ALRAE;
 	RTC->CR |= RTC_CR_ALRAIE;
 	RtcLock();
@@ -76,39 +150,8 @@ void RtcSetAlarmEveryMinute(){
 
 void BSP_RTC_EXTI_Init()
 {
-	// Enable EXTI line 17
 	EXTI->IMR |= EXTI_IMR_IM17;
-
-	// Enable Rising / Disable Falling trigger
 	EXTI->RTSR |=  EXTI_RTSR_RT17;
 	EXTI->FTSR &= ~EXTI_FTSR_FT17;
 }
-
-
-//
-//
-//void RtcSetAlarmEveryHourMinute(uint8_t minutes){
-//	RtcUnlock();
-//	RTC->CR &= ~(RTC_CR_ALRAE);
-//	RTC->ISR &= ~(RTC_ISR_ALRAWF);
-//	uint8_t timeout = 0xFF;
-//	while (((RTC->ISR & RTC_ISR_ALRAWF) != RTC_ISR_ALRAWF) && (timeout > 0))
-//	{
-//		timeout--;
-//	}
-//
-//	uint8_t minutesUnits = minutes % 10;
-//	RTC->ALRMAR |=  minutesUnits << RTC_ALRMAR_MNU_Pos;
-//
-//	uint8_t minutesTens = minutes / 10;
-//	RTC->ALRMAR |=  minutesTens << RTC_ALRMAR_MNT_Pos;
-//
-//	RTC->ALRMAR |= RTC_ALRMAR_MSK4 | RTC_ALRMAR_MSK3 ;
-//	RTC->CR |= RTC_CR_ALRAE;
-//	RTC->CR |= RTC_CR_ALRAIE;
-//	RtcLock();
-//	NVIC_EnableIRQ(RTC_IRQn);
-//}
-//
-//
 
