@@ -34,6 +34,7 @@ SOFTWARE.
 #include "stm32f042_spi.h"
 #include "stm32f042_gpio.h"
 #include "stm32f042_rtc.h"
+#include "stm32f042_adc.h"
 #include "bmp280.h"
 #include "__rfm12b_platform.h"
 #include "__rfm12b.h"
@@ -198,13 +199,16 @@ void RTC_IRQHandler (void){
 int main(void)
 {
 
+	AdcEnable ();
+	AdcDmaSingleConversion ();
+
 	StartSystick();
 
 	BSP_RTC_EXTI_Init();
 	RtcInit();
 	SystemCoreClockUpdate();
 //	RtcSetAlarmEveryGivenMinutes(1);
-	RtcSetAlarmEveryGivenSeconds(3);
+	RtcSetAlarmEveryGivenSeconds(30);
 	GpioInitForSpi1();
 
 	Spi1Init8bit();
@@ -327,7 +331,7 @@ int main(void)
 			if (RTC->ISR & RTC_ISR_ALRAF){
 				RTC->ISR &= ~RTC_ISR_ALRAF;
 //				RtcSetAlarmEveryGivenMinutes(2);
-				RtcSetAlarmEveryGivenSeconds(3);
+				RtcSetAlarmEveryGivenSeconds(30);
 				TOGGLE_LED();
 
 				SPI1Reset();

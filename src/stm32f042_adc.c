@@ -26,16 +26,33 @@ void AdcCalibration (void){
 	}
 }
 
-void EnableAdc (void){
+void AdcEnable (void){
+	RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
 	ADC1->ISR |= ADC_ISR_ADRDY;
 	ADC1->CR |= ADC_CR_ADEN;
 	uint16_t timout = 0xFFFF;
 	while ((!(ADC1->ISR && ADC_ISR_ADRDY)) && (timout > 0));
-	RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
 	RCC->CR2 = RCC_CR2_HSI14ON;
 	timout = 0xFFFF;
-	while (((RCC->CR2 & RCC_CR2_HSI14RDY) == 0) && (timout>0));
-
-//	A.7.9 DMA one shot mode sequence
-
+	while (!(RCC->CR2 & RCC_CR2_HSI14RDY) && (timout>0));
 }
+
+
+
+void AdcDmaSingleConversion (void){
+	RCC->AHBENR |= RCC_AHBENR_DMA1EN;
+	ADC1->CFGR1 |= ADC_CFGR1_DMAEN;
+	DMA1_Channel1->CPAR = (uint32_t)(&ADC1->DR);
+	static uint16_t adcResult;
+	DMA1_Channel1->CMAR = &adcResult;
+	DMA1_Channel1->CNDTR = 1;
+	DMA1_Channel1->CCR |= DMA_CCR_MSIZE_0; /*Memory: 16bits*/
+	DMA1_Channel1->CCR |= DMA_CCR_PSIZE_0; /*Periph: 16bits*/
+	DMA1_Channel1->CCR |= DMA_CCR_TCIE;
+	DMA1_Channel1->CCR |= DMA_CCR_EN;
+
+	ADC1->CHSELR |= ADC_CHSELR_CHSEL1;
+	ADC1->CR |= ADC_CR_ADSTART;
+}
+
+
