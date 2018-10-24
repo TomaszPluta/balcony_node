@@ -84,7 +84,7 @@ void RtcSetAlarmEveryGivenSeconds(uint8_t seconds){
 	RTC->ALRMAR |=  secondsTens << RTC_ALRMAR_ST_Pos;
 
 	uint8_t timeout = 0xFF;
-	while ((RTC->ISR & RTC_ISR_ALRAWF)  && (timeout > 0))
+	while (!(RTC->ISR & RTC_ISR_ALRAWF)  && (timeout > 0))
 	{
 		timeout--;
 	}
@@ -92,7 +92,7 @@ void RtcSetAlarmEveryGivenSeconds(uint8_t seconds){
 
 	RTC->ISR |= RTC_ISR_INIT;
 	timeout = 0xFF;
-	while ((RTC->ISR & RTC_ISR_INITF) && (timeout > 0))
+	while (!(RTC->ISR & RTC_ISR_INITF) && (timeout > 0))
 	{
 		timeout--;
 	}
@@ -122,7 +122,7 @@ void RtcSetAlarmEveryGivenMinutes(uint8_t minutes){
 	RTC->ALRMAR |=  minutesTens << RTC_ALRMAR_MNT_Pos;
 
 	uint8_t timeout = 0xFF;
-	while ((RTC->ISR & RTC_ISR_ALRAWF) && (timeout > 0))
+	while (!(RTC->ISR & RTC_ISR_ALRAWF) && (timeout > 0))
 	{
 		timeout--;
 	}
@@ -130,7 +130,7 @@ void RtcSetAlarmEveryGivenMinutes(uint8_t minutes){
 
 	RTC->ISR |= RTC_ISR_INIT;
 	timeout = 0xFF;
-	while ((RTC->ISR & RTC_ISR_INITF) && (timeout > 0))
+	while (!(RTC->ISR & RTC_ISR_INITF) && (timeout > 0))
 	{
 		timeout--;
 	}

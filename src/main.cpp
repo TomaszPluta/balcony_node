@@ -202,9 +202,9 @@ int main(void)
 
 	BSP_RTC_EXTI_Init();
 	RtcInit();
-//	RtcSetAlarmEveryMinute();
 	SystemCoreClockUpdate();
-	RtcSetAlarmEveryGivenMinutes(2);
+//	RtcSetAlarmEveryGivenMinutes(1);
+	RtcSetAlarmEveryGivenSeconds(3);
 	GpioInitForSpi1();
 
 	Spi1Init8bit();
@@ -326,7 +326,8 @@ int main(void)
 		while (1){
 			if (RTC->ISR & RTC_ISR_ALRAF){
 				RTC->ISR &= ~RTC_ISR_ALRAF;
-				RtcSetAlarmEveryGivenMinutes(2);
+//				RtcSetAlarmEveryGivenMinutes(2);
+				RtcSetAlarmEveryGivenSeconds(3);
 				TOGGLE_LED();
 
 				SPI1Reset();

@@ -31,6 +31,11 @@ void EnableAdc (void){
 	ADC1->CR |= ADC_CR_ADEN;
 	uint16_t timout = 0xFFFF;
 	while ((!(ADC1->ISR && ADC_ISR_ADRDY)) && (timout > 0));
-	RCC->APB2ENR |= RCC_APB2ENR_ADC1EN
+	RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
+	RCC->CR2 = RCC_CR2_HSI14ON;
+	timout = 0xFFFF;
+	while (((RCC->CR2 & RCC_CR2_HSI14RDY) == 0) && (timout>0));
+
+//	A.7.9 DMA one shot mode sequence
 
 }

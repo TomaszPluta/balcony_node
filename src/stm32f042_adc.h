@@ -16,8 +16,8 @@ extern "C" {
 #endif
 
 
-
-
+void AdcEnable (void);
+void AdcDmaSingleConversion (void);
 
 
 
