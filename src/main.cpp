@@ -120,6 +120,15 @@ void RTC_IRQHandler (void){
 	EXTI->PR |= EXTI_PR_PR17;
 }
 
+
+void DMA1_Channel1_IRQHandler (void){
+	NVIC_ClearPendingIRQ(DMA1_Channel1_IRQn);
+	DMA1->IFCR |= DMA_IFCR_CTCIF1;
+	asm volatile ("nop");
+}
+
+
+
 #ifdef __cplusplus
 }
 #endif
@@ -200,8 +209,8 @@ int main(void)
 {
 
 	AdcEnable ();
-	AdcDmaSingleConversion ();
-
+	AdcConfigDmaTransfer ();
+	AdcStartSingleConversion();
 	StartSystick();
 
 	BSP_RTC_EXTI_Init();
@@ -272,6 +281,7 @@ int main(void)
 
  	rfm12bFifoReset();
  	rfm12bSwitchRx();
+	NVIC_SetPriority(EXTI0_1_IRQn, 0);
  	NVIC_EnableIRQ(EXTI0_1_IRQn);
  	Rrm12bObjInit (&rfm12bObj, NODE_ADDR);
 
@@ -333,6 +343,10 @@ int main(void)
 //				RtcSetAlarmEveryGivenMinutes(2);
 				RtcSetAlarmEveryGivenSeconds(30);
 				TOGGLE_LED();
+
+
+				AdcStartSingleConversion();
+
 
 				SPI1Reset();
 				Spi1Init8bit();

@@ -39,7 +39,7 @@ void AdcEnable (void){
 
 
 
-void AdcDmaSingleConversion (void){
+void AdcConfigDmaTransfer (void){
 	RCC->AHBENR |= RCC_AHBENR_DMA1EN;
 	ADC1->CFGR1 |= ADC_CFGR1_DMAEN;
 	DMA1_Channel1->CPAR = (uint32_t)(&ADC1->DR);
@@ -50,9 +50,24 @@ void AdcDmaSingleConversion (void){
 	DMA1_Channel1->CCR |= DMA_CCR_PSIZE_0; /*Periph: 16bits*/
 	DMA1_Channel1->CCR |= DMA_CCR_TCIE;
 	DMA1_Channel1->CCR |= DMA_CCR_EN;
-
+	NVIC_EnableIRQ(DMA1_Channel1_IRQn);
+	NVIC_SetPriority(DMA1_Channel1_IRQn, 4);
 	ADC1->CHSELR |= ADC_CHSELR_CHSEL1;
+	ADC1->CFGR1 |= ADC_CFGR1_OVRMOD;
+	ADC1->CFGR1 |= ADC_CFGR1_AUTOFF;
+}
+
+
+
+void AdcStartSingleConversion (void){
 	ADC1->CR |= ADC_CR_ADSTART;
 }
+
+
+
+
+
+
+
 
 

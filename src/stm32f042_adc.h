@@ -17,8 +17,8 @@ extern "C" {
 
 
 void AdcEnable (void);
-void AdcDmaSingleConversion (void);
-
+void AdcConfigDmaTransfer (void);
+void AdcStartSingleConversion (void);
 
 
 #ifdef __cplusplus
