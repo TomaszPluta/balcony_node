@@ -40,12 +40,12 @@ void AdcEnable (void){
 
 
 void AdcConfigDmaTransfer (volatile uint16_t * adcBuff){
-	RCC->AHBENR |= RCC_AHBENR_DMA1EN;
+ 	RCC->AHBENR |= RCC_AHBENR_DMA1EN;
 	ADC1->CFGR1 |= ADC_CFGR1_DMAEN;
 	DMA1_Channel1->CPAR = (uint32_t)(&ADC1->DR); /*perriph address*/
 //	static uint16_t adcResult[2];
 	DMA1_Channel1->CMAR = adcBuff;
-	DMA1_Channel1->CNDTR = 1;
+	DMA1_Channel1->CNDTR = 2;
 	DMA1_Channel1->CCR |= DMA_CCR_MSIZE_0; /*Memory: 16bits*/
 	DMA1_Channel1->CCR |= DMA_CCR_PSIZE_0; /*Periph: 16bits*/
 	DMA1_Channel1->CCR |= DMA_CCR_TCIE;	/* IRQ Transer complete*/
@@ -55,7 +55,7 @@ void AdcConfigDmaTransfer (volatile uint16_t * adcBuff){
 	NVIC_EnableIRQ(DMA1_Channel1_IRQn);
 	NVIC_SetPriority(DMA1_Channel1_IRQn, 4);
 
-	ADC1->CHSELR |= ADC_CHSELR_CHSEL1 |ADC_CHSELR_CHSEL5;
+	ADC1->CHSELR |= ADC_CHSELR_CHSEL1 | ADC_CHSELR_CHSEL5;
 	ADC1->CFGR1 |= ADC_CFGR1_OVRMOD;
 	ADC1->CFGR1 |= ADC_CFGR1_AUTOFF;
 }
