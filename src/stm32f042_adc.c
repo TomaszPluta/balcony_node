@@ -48,10 +48,13 @@ void AdcConfigDmaTransfer (void){
 	DMA1_Channel1->CNDTR = 1;
 	DMA1_Channel1->CCR |= DMA_CCR_MSIZE_0; /*Memory: 16bits*/
 	DMA1_Channel1->CCR |= DMA_CCR_PSIZE_0; /*Periph: 16bits*/
-	DMA1_Channel1->CCR |= DMA_CCR_TCIE;
+	DMA1_Channel1->CCR |= DMA_CCR_TCIE;	/* IRQ Transer complete*/
+	DMA1_Channel1->CCR |= DMA_CCR_CIRC; /*circular mode*/
+	DMA1_Channel1->CCR |= DMA_CCR_MINC; /*increment memory*/
 	DMA1_Channel1->CCR |= DMA_CCR_EN;
 	NVIC_EnableIRQ(DMA1_Channel1_IRQn);
 	NVIC_SetPriority(DMA1_Channel1_IRQn, 4);
+
 	ADC1->CHSELR |= ADC_CHSELR_CHSEL1;
 	ADC1->CFGR1 |= ADC_CFGR1_OVRMOD;
 	ADC1->CFGR1 |= ADC_CFGR1_AUTOFF;

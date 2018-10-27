@@ -217,7 +217,7 @@ int main(void)
 	RtcInit();
 	SystemCoreClockUpdate();
 //	RtcSetAlarmEveryGivenMinutes(1);
-	RtcSetAlarmEveryGivenSeconds(30);
+	RtcSetAlarmEveryGivenSeconds(5);
 	GpioInitForSpi1();
 
 	Spi1Init8bit();
@@ -341,7 +341,7 @@ int main(void)
 			if (RTC->ISR & RTC_ISR_ALRAF){
 				RTC->ISR &= ~RTC_ISR_ALRAF;
 //				RtcSetAlarmEveryGivenMinutes(2);
-				RtcSetAlarmEveryGivenSeconds(30);
+				RtcSetAlarmEveryGivenSeconds(5);
 				TOGGLE_LED();
 
 
