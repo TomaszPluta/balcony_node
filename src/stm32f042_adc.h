@@ -17,7 +17,7 @@ extern "C" {
 
 
 void AdcEnable (void);
-void AdcConfigDmaTransfer (void);
+void AdcConfigDmaTransfer (volatile uint16_t * adcBuff);
 void AdcStartSingleConversion (void);
 
 

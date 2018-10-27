@@ -64,7 +64,7 @@ SOFTWARE.
 
 volatile rfm12bObj_t rfm12bObj;
 struct bmp280_t bmp280;
-
+volatile uint16_t  adcBuff[2];
 
 
 #ifdef __cplusplus
@@ -204,12 +204,11 @@ void DMA1_Channel1_IRQHandler (void){
 
 
 
-
 int main(void)
 {
 
 	AdcEnable ();
-	AdcConfigDmaTransfer ();
+	AdcConfigDmaTransfer (adcBuff);
 	AdcStartSingleConversion();
 	StartSystick();
 
