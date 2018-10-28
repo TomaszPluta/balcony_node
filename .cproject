@@ -98,6 +98,7 @@
 								<option id="com.atollic.truestudio.gpp.optimization.fno_rtti.808617288" name="Disable RTTI" superClass="com.atollic.truestudio.gpp.optimization.fno_rtti" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 								<option id="com.atollic.truestudio.gpp.optimization.fno_exceptions.406636165" name="Disable exception handling" superClass="com.atollic.truestudio.gpp.optimization.fno_exceptions" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 								<option id="com.atollic.truestudio.common_options.target.interwork.1253531786" name="Mix ARM/Thumb" superClass="com.atollic.truestudio.common_options.target.interwork" useByScannerDiscovery="false"/>
+								<option id="com.atollic.truestudio.gpp.misc.otherflags.822536608" superClass="com.atollic.truestudio.gpp.misc.otherflags" useByScannerDiscovery="false" value="-std=c++11" valueType="string"/>
 								<inputType id="com.atollic.truestudio.gpp.input.929266172" superClass="com.atollic.truestudio.gpp.input"/>
 							</tool>
 							<tool id="com.atollic.truestudio.exe.debug.toolchain.ldcc.646280267" name="C++ Linker" superClass="com.atollic.truestudio.exe.debug.toolchain.ldcc">

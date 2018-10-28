@@ -42,16 +42,10 @@ SOFTWARE.
 #include "mqtt_client.h"
 #include "mqtt_packet.h"
 #include "mqtt_socket.h"
-
 #include "systemDefines.h"
 
-/**
-**===========================================================================
-**
-**  Abstract: main program
-**
-**===========================================================================
-*/
+
+
 
 #define NODE_ADDR					(2)
 #define MAX_PUBLISH_BUFF_SIZE		(32)
@@ -115,8 +109,6 @@ void EXTI0_1_IRQHandler (void){
 
 
 void RTC_IRQHandler (void){
-//	RTC->ISR &= ~RTC_ISR_ALRAF;
-
 	EXTI->PR |= EXTI_PR_PR17;
 }
 
@@ -204,8 +196,10 @@ void DMA1_Channel1_IRQHandler (void){
 
 
 
+
 int main(void)
 {
+
 
 	AdcEnable ();
 	AdcConfigDmaTransfer (adcBuff);
