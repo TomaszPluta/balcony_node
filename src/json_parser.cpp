@@ -6,24 +6,12 @@
  */
 
 
-#include <vector>
-#include <string>
 
+
+#include "json_parser.h"
 using namespace std;
 
-class token{
-	string tokenId;
-	uint8_t tokenSize;
-	token(string name, uint8_t size);
-};
 
-
-class json{
-	string jsonBuff;
-	string jsonFormat;
-	vector<token> tokens;
-	json(string format);
-};
 
 
 typedef struct{
@@ -35,13 +23,30 @@ typedef struct{
 }nodeResult_t;
 
 
-//string format =  "\"id\ : ":,temp,press,light,hum";
+
+json::json(vector<class token> tokens){
+	jsonFormat.append("\"");
+	for (auto it  = tokens.begin(); it != tokens.end(); it++){
+		jsonFormat.append("\"");
+		jsonFormat.append((*it).getTokenId());
+		jsonFormat.append("\":");
+		if ((*it).getTokenType() == tokenString){
+			jsonFormat.append("%s");
+		}else {
+			jsonFormat.append("%d");
+		}
+	}
+	jsonFormat.append("\"");
+}
+
+
+
 
 //myObj = { "id":"balcony", "temp":30, "press":1024, "light":500, "hum":60,};
 
 void funct (string name, uint8_t size){
 	//token_t token(name, size);
-
+	string format =  "\"id\":%s\",\"temp\": %d,\"press\":%d,\"light\":%d,\"hum\"%d";
 
     // Create a vector containing integers
     std::vector<int> v = {7, 5, 16, 8};
@@ -55,6 +60,7 @@ void funct (string name, uint8_t size){
 
 
 /*
+ *
 myObj = { "id":"balcony", "temp":30, "press":1024, "light":500, "hum":60,};
 
 

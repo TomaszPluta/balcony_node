@@ -45,7 +45,11 @@ SOFTWARE.
 #include "systemDefines.h"
 
 
+#include <vector>
+#include <string>
+#include "json_parser.h"
 
+using namespace::std;
 
 #define NODE_ADDR					(2)
 #define MAX_PUBLISH_BUFF_SIZE		(32)
@@ -200,6 +204,12 @@ void DMA1_Channel1_IRQHandler (void){
 int main(void)
 {
 
+	token tokenTemp("temp", tokenString);
+	token tokenPress("press", tokenInt);
+	vector<token> tokens;
+	tokens.push_back(tokenTemp);
+	tokens.push_back(tokenPress);
+	json jsonNode(tokens);
 
 	AdcEnable ();
 	AdcConfigDmaTransfer (adcBuff);
@@ -357,7 +367,7 @@ int main(void)
 
 				MqttPublish publish;
 				//uint8_t publishBuffer[MAX_PUBLISH_BUFF_SIZE];
-				char * publishBuffer = "XXpublishXX";
+				const char * publishBuffer = "XXpublishXX";
 				publish.buffer = (uint8_t*) publishBuffer;
 				publish.total_len = 16;
 				publish.duplicate = 0;
