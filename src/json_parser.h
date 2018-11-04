@@ -24,14 +24,15 @@ public:
 	tokenT (std::string id, uint32_t uIntVal){
 		this->id = id;
 		this->Val = uIntVal;
-		char stringVal[16];
-		sprintf(stringVal, "%d", this->Val );
+		const uint8_t intSize = 8;
+		char stringVal[intSize];
+		snprintf(stringVal, intSize, "%d", this->Val );
 		this->pair = "\"" + id + "\"" + ":" + stringVal;
 	}
 	tokenT (std::string id, std::string stringVal){
 		this->id = id;
 		this->Val = stringVal;
-		this->pair = "\"" + id + "\"" + stringVal;
+		this->pair = "\"" + id + "\""  + ":" +   "\"" + stringVal + "\"" ;
 	}
 
 };
@@ -43,10 +44,8 @@ public:
 class json{
 	std::string Buff;
 	std::string Format;
-	std::vector<token> tokens;
 	//json(string format);
 public:
-	json(std::vector<token> tokens);
 	void parse(void);
 };
 

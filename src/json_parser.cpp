@@ -24,24 +24,6 @@ typedef struct{
 
 
 
-//json::json(vector<class token> tokens){
-//	Format.append("{");
-//	for (auto it  = tokens.begin(); it != tokens.end(); it++){
-//		Format.append("\"");
-//		Format.append((*it).getTokenId());
-//		Format.append("\":");
-//		if ((*it).getTokenType() == tokenString){
-//			Format.append("%s");
-//		}else {
-//			Format.append("%d");
-//		}
-//		zrobic sprintfy dla poszczegolnych tokenow i tutaj je tylko laczyc.
-//	}
-//	Format.append("}");
-//
-//	Buff.append(snprintf(Format, 10,    );
-//}
-
 
 
 
@@ -60,6 +42,23 @@ void funct (string name, uint8_t size){
 
 
 }
+
+/* valid json examples
+{
+   "name":"John",
+   "age":30,
+   "cars":{
+      "id":"balcony",
+      "temp":30,
+      "press":1024,
+      "light":500,
+      "hum":60
+   }
+}
+
+
+{"id":"balcony", "temp":30, "press":1024, "light":500, "hum":60}
+*/
 
 
 /*
