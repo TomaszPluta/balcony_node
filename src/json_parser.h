@@ -10,43 +10,44 @@
 
 #include <vector>
 #include <string>
+#include <sstream>
 
 
 
 
-enum tokenType_t {
-	tokenString ,
-	tokenInt,
-};
-
-
-
-class token{
-	std::string tokenId;
-	tokenType_t tokenType;
+template <class T>
+class tokenT {
+	std::string id;
+	T Val;
+	std::string pair;
 public:
-	token(std::string id, tokenType_t tokenType){		; //add initializer list
-		 this->tokenId =id;
-		 this->tokenType = tokenType;
+	tokenT (std::string id, uint32_t uIntVal){
+		this->id = id;
+		this->Val = uIntVal;
+		char stringVal[16];
+		sprintf(stringVal, "%d", this->Val );
+		this->pair = "\"" + id + "\"" + ":" + stringVal;
 	}
-	std::string getTokenId(){
-		return tokenId;
+	tokenT (std::string id, std::string stringVal){
+		this->id = id;
+		this->Val = stringVal;
+		this->pair = "\"" + id + "\"" + stringVal;
 	}
-	tokenType_t getTokenType(){
-		return tokenType;
-	}
+
 };
+
 
 
 
 
 class json{
-	std::string jsonBuff;
-	std::string jsonFormat;
+	std::string Buff;
+	std::string Format;
 	std::vector<token> tokens;
 	//json(string format);
 public:
 	json(std::vector<token> tokens);
+	void parse(void);
 };
 
 

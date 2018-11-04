@@ -24,20 +24,23 @@ typedef struct{
 
 
 
-json::json(vector<class token> tokens){
-	jsonFormat.append("\"");
-	for (auto it  = tokens.begin(); it != tokens.end(); it++){
-		jsonFormat.append("\"");
-		jsonFormat.append((*it).getTokenId());
-		jsonFormat.append("\":");
-		if ((*it).getTokenType() == tokenString){
-			jsonFormat.append("%s");
-		}else {
-			jsonFormat.append("%d");
-		}
-	}
-	jsonFormat.append("\"");
-}
+//json::json(vector<class token> tokens){
+//	Format.append("{");
+//	for (auto it  = tokens.begin(); it != tokens.end(); it++){
+//		Format.append("\"");
+//		Format.append((*it).getTokenId());
+//		Format.append("\":");
+//		if ((*it).getTokenType() == tokenString){
+//			Format.append("%s");
+//		}else {
+//			Format.append("%d");
+//		}
+//		zrobic sprintfy dla poszczegolnych tokenow i tutaj je tylko laczyc.
+//	}
+//	Format.append("}");
+//
+//	Buff.append(snprintf(Format, 10,    );
+//}
 
 
 

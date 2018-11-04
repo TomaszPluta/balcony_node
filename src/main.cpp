@@ -204,12 +204,17 @@ void DMA1_Channel1_IRQHandler (void){
 int main(void)
 {
 
-	token tokenTemp("temp", tokenString);
-	token tokenPress("press", tokenInt);
-	vector<token> tokens;
-	tokens.push_back(tokenTemp);
-	tokens.push_back(tokenPress);
-	json jsonNode(tokens);
+//	token tokenTemp(tokenString, "temp");
+//	token tokenPress(tokenInt, "press");
+//	vector<token> tokens;
+//	tokens.push_back(tokenTemp);
+//	tokens.push_back(tokenPress);
+//	json jsonNode(tokens);
+
+
+
+	tokenT <int>tokenTemp("temp", 24);
+	tokenT <string>tokenStr("user", "Smith");
 
 	AdcEnable ();
 	AdcConfigDmaTransfer (adcBuff);
