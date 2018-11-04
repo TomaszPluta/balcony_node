@@ -34,7 +34,18 @@ public:
 		this->Val = stringVal;
 		this->pair = "\"" + id + "\""  + ":" +   "\"" + stringVal + "\"" ;
 	}
-
+	void actualizeId(std::string id){
+		this->id = id;
+	}
+	void updateValue(uint32_t uIntVal){
+		this->Val = uIntVal;
+	}
+	void updateValue(std::string stringVal){
+		this->Val = stringVal;
+	}
+	void updateString(void){
+		;
+	}
 };
 
 
@@ -42,9 +53,8 @@ public:
 
 
 class json{
-	std::string Buff;
-	std::string Format;
-	//json(string format);
+	std::string jsonBuff;
+	std::vector <std::string> tokensStrings;
 public:
 	void parse(void);
 };
