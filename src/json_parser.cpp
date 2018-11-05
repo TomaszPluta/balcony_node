@@ -23,7 +23,14 @@ typedef struct{
 }nodeResult_t;
 
 
-
+std::string intToString(uint32_t intVal){
+	/*due to not available "to_string()" c++11 func*/
+	const uint8_t intSize = 8;
+	char charVal[intSize];
+	snprintf(charVal, intSize, "%u", intVal);
+	std::string strVal(charVal);
+	return strVal;
+}
 
 
 

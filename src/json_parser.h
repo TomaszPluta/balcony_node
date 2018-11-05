@@ -12,39 +12,43 @@
 #include <string>
 #include <sstream>
 
+std::string intToString(uint32_t intVal);
 
 
-
-template <class T>
 class tokenT {
+private:
 	std::string id;
-	T Val;
-	std::string pair;
+	std::string strVal;
+	std::string content;
+	void updateContnent(void){
+		this->content = "\"" + this->id + "\"" + ":" + this->strVal;
+	}
 public:
 	tokenT (std::string id, uint32_t uIntVal){
 		this->id = id;
-		this->Val = uIntVal;
-		const uint8_t intSize = 8;
-		char stringVal[intSize];
-		snprintf(stringVal, intSize, "%d", this->Val );
-		this->pair = "\"" + id + "\"" + ":" + stringVal;
+		this->strVal = intToString(uIntVal);
+		this->updateContnent();
 	}
 	tokenT (std::string id, std::string stringVal){
 		this->id = id;
-		this->Val = stringVal;
-		this->pair = "\"" + id + "\""  + ":" +   "\"" + stringVal + "\"" ;
+		this->strVal = stringVal;
+		this->content = "\"" + id + "\""  + ":" +   "\"" + stringVal + "\"" ;
 	}
-	void actualizeId(std::string id){
+	tokenT (std::string id){
 		this->id = id;
+		this->content = "\"" + id + "\""  + ":";
+	}
+	void UpdateId(std::string id){
+		this->id = id;
+		this->updateContnent();
 	}
 	void updateValue(uint32_t uIntVal){
-		this->Val = uIntVal;
+		this->strVal = intToString(uIntVal);
+		this->updateContnent();
 	}
 	void updateValue(std::string stringVal){
-		this->Val = stringVal;
-	}
-	void updateString(void){
-		;
+		this->strVal = stringVal;
+		this->updateContnent();
 	}
 };
 
@@ -54,9 +58,21 @@ public:
 
 class json{
 	std::string jsonBuff;
-	std::vector <std::string> tokensStrings;
+	std::vector <std::string> tokens;
+	std::string content;
 public:
-	void parse(void);
+	std::string parse(void){
+		this->content = "{";
+		for (auto it : tokens){
+			this->content += it;
+		}
+		this->content += "}";
+		return this->content;
+	}
+	void add (std::string newToken){
+		tokens.push_back(newToken);
+	}
+//	json ();
 };
 
 

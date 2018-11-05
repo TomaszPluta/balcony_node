@@ -212,9 +212,17 @@ int main(void)
 //	json jsonNode(tokens);
 
 
+	json jsonNode;
+	tokenT tokenTemp("temp");
+	jsonNode.addToken(tokenTemp);
+	tokenT tokenPress("press");
+	jsonNode.addToken(tokenTemp);
+	tokenT tokenHumid("humid");
+	jsonNode.addToken(tokenTemp);
+	tokenT tokenLight("light");
+	jsonNode.addToken(tokenTemp);
 
-	tokenT <int>tokenTemp("temp", 24);
-	tokenT <string>tokenStr("user", "Smith");
+jsonNode.parse();
 
 	AdcEnable ();
 	AdcConfigDmaTransfer (adcBuff);
