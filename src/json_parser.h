@@ -11,8 +11,16 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <array>
+
+
+#define MAX_JSON_TOKENS				(4)
+
 
 std::string intToString(uint32_t intVal);
+
+
+
 
 
 class tokenT {
@@ -20,59 +28,59 @@ private:
 	std::string id;
 	std::string strVal;
 	std::string content;
-	void updateContnent(void){
-		this->content = "\"" + this->id + "\"" + ":" + this->strVal;
-	}
+	void updateContnent(void){}
 public:
-	tokenT (std::string id, uint32_t uIntVal){
-		this->id = id;
-		this->strVal = intToString(uIntVal);
-		this->updateContnent();
-	}
-	tokenT (std::string id, std::string stringVal){
-		this->id = id;
-		this->strVal = stringVal;
-		this->content = "\"" + id + "\""  + ":" +   "\"" + stringVal + "\"" ;
-	}
-	tokenT (std::string id){
-		this->id = id;
-		this->content = "\"" + id + "\""  + ":";
-	}
-	void UpdateId(std::string id){
-		this->id = id;
-		this->updateContnent();
-	}
-	void updateValue(uint32_t uIntVal){
-		this->strVal = intToString(uIntVal);
-		this->updateContnent();
-	}
-	void updateValue(std::string stringVal){
-		this->strVal = stringVal;
-		this->updateContnent();
-	}
+	tokenT (void);
+	tokenT (std::string id, uint32_t uIntVal);
+	tokenT (std::string id, std::string stringVal);
+	void UpdateId(std::string id);
+	void UpdateContent(uint32_t uIntVal);
+	void UpdateContent(std::string stringVal);
+	std::string GetId(void);
+	std::string GetContent(void);
 };
 
 
 
 
 
+
 class json{
-	std::string jsonBuff;
-	std::vector <std::string> tokens;
+	std::array <tokenT, MAX_JSON_TOKENS> tokens;
 	std::string content;
 public:
+
 	std::string parse(void){
 		this->content = "{";
-		for (auto it : tokens){
-			this->content += it;
+		for (auto & it : tokens){
+			this->content += it.GetContent();
 		}
 		this->content += "}";
 		return this->content;
 	}
-	void add (std::string newToken){
-		tokens.push_back(newToken);
+
+	std::string  update (tokenT token){
+		for (auto & it : tokens){
+			if (it.GetId() == token.GetId()){
+				it.UpdateContent(token.GetContent());
+				break;
+			}
+		}
+		return this->parse();
 	}
-//	json ();
+
+	bool add (tokenT newToken){
+		for (auto & it : tokens){
+			if (it.GetId().empty()){
+				it = newToken;
+				return true;
+			}
+		}
+		return false;
+	}
+	json (){
+		this ->content.clear();
+	}
 };
 
 

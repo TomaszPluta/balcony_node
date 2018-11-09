@@ -100,6 +100,8 @@
 								<option id="com.atollic.truestudio.common_options.target.interwork.1253531786" name="Mix ARM/Thumb" superClass="com.atollic.truestudio.common_options.target.interwork" useByScannerDiscovery="false"/>
 								<option id="com.atollic.truestudio.gpp.misc.otherflags.822536608" name="Other options" superClass="com.atollic.truestudio.gpp.misc.otherflags" useByScannerDiscovery="false" value="-std=c++11" valueType="string"/>
 								<option id="com.atollic.truestudio.gpp.cppstandard.620377857" name="C++ standard" superClass="com.atollic.truestudio.gpp.cppstandard" useByScannerDiscovery="false" value="com.atollic.truestudio.gpp.cppstandard.gnupp0x" valueType="enumerated"/>
+								<option id="com.atollic.truestudio.gpp.misc.stackusage.40327635" superClass="com.atollic.truestudio.gpp.misc.stackusage" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="com.atollic.truestudio.exe.debug.toolchain.gpp.debug.info.1602444045" superClass="com.atollic.truestudio.exe.debug.toolchain.gpp.debug.info" useByScannerDiscovery="false" value="com.atollic.truestudio.gpp.debug.info.1" valueType="enumerated"/>
 								<inputType id="com.atollic.truestudio.gpp.input.929266172" superClass="com.atollic.truestudio.gpp.input"/>
 							</tool>
 							<tool command="arm-atollic-eabi-g++ " id="com.atollic.truestudio.exe.debug.toolchain.ldcc.646280267" name="C++ Linker" superClass="com.atollic.truestudio.exe.debug.toolchain.ldcc">

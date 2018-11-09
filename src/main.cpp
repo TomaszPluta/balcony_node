@@ -212,17 +212,16 @@ int main(void)
 //	json jsonNode(tokens);
 
 
-	json jsonNode;
-	tokenT tokenTemp("temp");
-	jsonNode.addToken(tokenTemp);
-	tokenT tokenPress("press");
-	jsonNode.addToken(tokenTemp);
-	tokenT tokenHumid("humid");
-	jsonNode.addToken(tokenTemp);
-	tokenT tokenLight("light");
-	jsonNode.addToken(tokenTemp);
+	//json jsonNode;
+//
+//	tokenT tokenPress("press");
+//	//jsonNode.addToken(tokenTemp);
+//	tokenT tokenHumid("humid");
+//	//jsonNode.addToken(tokenTemp);
+//	tokenT tokenLight("light");
+//	//jsonNode.addToken(tokenTemp);
 
-jsonNode.parse();
+//	std::string jsonNodeStr = jsonNode.parse();
 
 	AdcEnable ();
 	AdcConfigDmaTransfer (adcBuff);
@@ -380,7 +379,7 @@ jsonNode.parse();
 
 				MqttPublish publish;
 				//uint8_t publishBuffer[MAX_PUBLISH_BUFF_SIZE];
-				const char * publishBuffer = "XXpublishXX";
+				const char * publishBuffer = "publishTEST";
 				publish.buffer = (uint8_t*) publishBuffer;
 				publish.total_len = 16;
 				publish.duplicate = 0;
