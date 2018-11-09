@@ -30,9 +30,25 @@ private:
 	std::string content;
 	void updateContnent(void){}
 public:
-	tokenT (void);
-	tokenT (std::string id, uint32_t uIntVal);
-	tokenT (std::string id, std::string stringVal);
+	tokenT (void){
+		this->id.clear();
+		this->strVal.clear();
+		this->content.clear();
+	}
+	tokenT (std::string id, uint32_t uIntVal){
+		this->id = id;
+		this->strVal = intToString(uIntVal);
+		this->updateContnent();
+	}
+	tokenT (std::string id, std::string stringVal){
+		this->id = id;
+		this->strVal = stringVal;
+		this->content = "\"" + id + "\""  + ":" +   "\"" + stringVal + "\"" ;
+	}
+	tokenT (std::string id){
+		this->id = id;
+		this->content = "\"" + id + "\""  + ":";
+	}
 	void UpdateId(std::string id);
 	void UpdateContent(uint32_t uIntVal);
 	void UpdateContent(std::string stringVal);

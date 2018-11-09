@@ -204,7 +204,8 @@ void DMA1_Channel1_IRQHandler (void){
 int main(void)
 {
 
-//	token tokenTemp(tokenString, "temp");
+	tokenT tokenTemp("id", "temp");
+	tokenT tokenTemlp("usr");
 //	token tokenPress(tokenInt, "press");
 //	vector<token> tokens;
 //	tokens.push_back(tokenTemp);

@@ -35,25 +35,6 @@ std::string intToString(uint32_t intVal){
 
 
 
-tokenT::tokenT (std::string id, uint32_t uIntVal){
-	this->id = id;
-	this->strVal = intToString(uIntVal);
-	this->updateContnent();
-}
-tokenT::tokenT (std::string id, std::string stringVal){
-	this->id = id;
-	this->strVal = stringVal;
-	this->content = "\"" + id + "\""  + ":" +   "\"" + stringVal + "\"" ;
-}
-tokenT::tokenT (std::string id){
-	this->id = id;
-	this->content = "\"" + id + "\""  + ":";
-}
-tokenT::tokenT (void){
-	this->id.clear();
-	this->strVal.clear();
-	this->content.clear();
-}
 void tokenT::UpdateId(std::string id){
 	this->id = id;
 	this->updateContnent();
