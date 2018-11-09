@@ -204,25 +204,19 @@ void DMA1_Channel1_IRQHandler (void){
 int main(void)
 {
 
-	tokenT tokenTemp("id", "temp");
-	tokenT tokenTemlp("usr");
-//	token tokenPress(tokenInt, "press");
-//	vector<token> tokens;
-//	tokens.push_back(tokenTemp);
-//	tokens.push_back(tokenPress);
-//	json jsonNode(tokens);
 
+	json jsonNode;
 
-	//json jsonNode;
-//
-//	tokenT tokenPress("press");
-//	//jsonNode.addToken(tokenTemp);
-//	tokenT tokenHumid("humid");
-//	//jsonNode.addToken(tokenTemp);
-//	tokenT tokenLight("light");
-//	//jsonNode.addToken(tokenTemp);
+	tokenT tokenTemp("temp");
+	jsonNode.add(tokenTemp);
+	tokenT tokenPress("press");
+	jsonNode.add(tokenPress);
+	tokenT tokenHumid("humid");
+	jsonNode.add(tokenHumid);
+	tokenT tokenLight("light");
+	jsonNode.add(tokenLight);
 
-//	std::string jsonNodeStr = jsonNode.parse();
+	std::string jsonNodeStr = jsonNode.parse();
 
 	AdcEnable ();
 	AdcConfigDmaTransfer (adcBuff);
