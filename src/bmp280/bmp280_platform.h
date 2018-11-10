@@ -29,6 +29,7 @@ extern "C" {
 
 struct bmp280_t;
 
+void bmp280_SPI_init (void);
 uint8_t  spi_read_write_string(uint8_t * read, uint8_t* write, uint8_t cnt);
 s8  BMP280_SPI_bus_read(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt);
 s8  BMP280_SPI_bus_write(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt);

@@ -33,6 +33,17 @@ std::string intToString(uint32_t intVal){
 }
 
 
+std::string intToString(int32_t intVal){
+	/*due to not available "to_string()" c++11 func*/
+	const uint8_t intSize = 8;
+	char charVal[intSize];
+	snprintf(charVal, intSize, "%d", intVal);
+	std::string strVal(charVal);
+	return strVal;
+}
+
+
+
 
 
 void tokenT::UpdateId(std::string id){
@@ -41,6 +52,10 @@ void tokenT::UpdateId(std::string id){
 }
 void tokenT::UpdateContent(uint32_t uIntVal){
 	this->strVal = intToString(uIntVal);
+	this->updateContnent();
+}
+void tokenT::UpdateContent(int32_t IntVal){
+	this->strVal = intToString(IntVal);
 	this->updateContnent();
 }
 void tokenT::UpdateContent(std::string stringVal){

@@ -54,6 +54,8 @@ using namespace::std;
 #define NODE_ADDR					(2)
 #define MAX_PUBLISH_BUFF_SIZE		(32)
 
+#define ADC_LIGHT_POS				(0)
+#define ADC_HUMID_POS					(1)
 
 #define SW_RESET (uint16_t)0b1111111000000000
 
@@ -62,7 +64,7 @@ using namespace::std;
 
 volatile rfm12bObj_t rfm12bObj;
 struct bmp280_t bmp280;
-volatile uint16_t  adcBuff[2];
+volatile uint16_t  adcBuffDMA[2];
 
 
 #ifdef __cplusplus
@@ -204,22 +206,21 @@ void DMA1_Channel1_IRQHandler (void){
 int main(void)
 {
 
-
-	json jsonNode;
-
+	json jsonDataToSend;
+	tokenT tokenCounter("counter");
+	jsonDataToSend.add(tokenCounter);
 	tokenT tokenTemp("temp");
-	jsonNode.add(tokenTemp);
+	jsonDataToSend.add(tokenTemp);
 	tokenT tokenPress("press");
-	jsonNode.add(tokenPress);
+	jsonDataToSend.add(tokenPress);
 	tokenT tokenHumid("humid");
-	jsonNode.add(tokenHumid);
+	jsonDataToSend.add(tokenHumid);
 	tokenT tokenLight("light");
-	jsonNode.add(tokenLight);
-
-	std::string jsonNodeStr = jsonNode.parse();
+	jsonDataToSend.add(tokenLight);
+	std::string jsonNodeStr = jsonDataToSend.parse();
 
 	AdcEnable ();
-	AdcConfigDmaTransfer (adcBuff);
+	AdcConfigDmaTransfer (adcBuffDMA);
 	AdcStartSingleConversion();
 	StartSystick();
 
@@ -242,8 +243,8 @@ int main(void)
 	signed long temperature;
 	signed long pressure;
 
-	signed long temp_out;
-	signed long press_out;
+	signed long tempOut;
+	signed long pressOut;
 
 
 
@@ -257,20 +258,20 @@ int main(void)
 	bmp280_get_power_mode(&powerMode);
 
 	bmp280_read_uncomp_temperature(&temperature);
-	temp_out = bmp280_compensate_temperature_int32(temperature);
+	tempOut = bmp280_compensate_temperature_int32(temperature);
 
 	bmp280_read_uncomp_pressure(&pressure);
-	press_out = bmp280_compensate_pressure_int32(pressure);
+	pressOut = bmp280_compensate_pressure_int32(pressure);
 
 
 	bmp280_set_power_mode(3);
 	bmp280_get_power_mode(&powerMode);
 
 	bmp280_read_uncomp_temperature(&temperature);
-	temp_out = bmp280_compensate_temperature_int32(temperature);
+	tempOut = bmp280_compensate_temperature_int32(temperature);
 
 	bmp280_read_uncomp_pressure(&pressure);
-	press_out = bmp280_compensate_pressure_int32(pressure);
+	pressOut = bmp280_compensate_pressure_int32(pressure);
 
 
 	/*led init*/
@@ -325,8 +326,6 @@ int main(void)
 		mqtt_con.password = "passw0rd";
 		MqttClient_Connect(&client, &mqtt_con);
 
-
-
 		const char* balconyConf = "flat/config/balcony";
 		const char* globalConf = "flat/config/global";
 
@@ -354,37 +353,41 @@ int main(void)
 				RtcSetAlarmEveryGivenSeconds(5);
 				TOGGLE_LED();
 
-
 				AdcStartSingleConversion();
 
-
-				SPI1Reset();
-				Spi1Init8bit();
+				bmp280_SPI_init();
 
 				bmp280_read_uncomp_temperature(&temperature);
-				temp_out = bmp280_compensate_temperature_int32(temperature);
+				tempOut = bmp280_compensate_temperature_int32(temperature);
+				tokenTemp.UpdateContent(tempOut);
+				jsonDataToSend.update(tokenTemp);
 
 				bmp280_read_uncomp_pressure(&pressure);
-				press_out = bmp280_compensate_pressure_int32(pressure);
+				pressOut = bmp280_compensate_pressure_int32(pressure);
+				tokenPress.UpdateContent(pressOut);
+				jsonDataToSend.update(tokenPress);
+
+				tokenLight.UpdateContent((uint32_t)adcBuffDMA[ADC_LIGHT_POS]);
+				jsonDataToSend.update(tokenLight);
+				tokenHumid.UpdateContent((uint32_t)adcBuffDMA[ADC_HUMID_POS]);
+				jsonDataToSend.update(tokenPress);
+
 
 				Rfm12bSpiInit();
 
-
-
-
+				tokenCounter.UpdateContent(pckt_count++);
+				jsonDataToSend.update(tokenCounter);
 				MqttPublish publish;
-				//uint8_t publishBuffer[MAX_PUBLISH_BUFF_SIZE];
-				const char * publishBuffer = "publishTEST";
-				publish.buffer = (uint8_t*) publishBuffer;
+				publish.buffer = (uint8_t*) jsonDataToSend.GetContent().data();
 				publish.total_len = 16;
 				publish.duplicate = 0;
 				publish.packet_id = 0;
 				publish.qos = MQTT_QOS_0;
 				publish.retain =0;
 				publish.stat = MQTT_MSG_BEGIN;
-				const char* topicTemp = "flat/balcony/temp/1";
-				publish.topic_name = topicTemp;
-				publish.topic_name_len = 32;
+				const char* topicBalcony = "flat/balcony/";
+				publish.topic_name = topicBalcony;
+				publish.topic_name_len = strlen(topicBalcony);
 				MqttClient_Publish(&client, &publish);
 
 
@@ -396,23 +399,6 @@ int main(void)
 		//	}
 }
 //http://pomad.fr/node/37
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

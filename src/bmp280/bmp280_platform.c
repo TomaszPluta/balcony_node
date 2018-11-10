@@ -3,6 +3,14 @@
 #include "bmp280.h"
 #include "stm32f042_spi.h"
 
+
+void bmp280_SPI_init (void){
+	SPI1Reset();
+	Spi1Init8bit();
+}
+
+
+
 uint8_t  spi_read_write_string(uint8_t * read, uint8_t* write, uint8_t cnt){
 	bmp280_CSN_L();
 	Spi1ReadWriteString(read, write, cnt);

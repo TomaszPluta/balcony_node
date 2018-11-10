@@ -12,9 +12,9 @@
 #include <string>
 #include <sstream>
 #include <array>
+#include <cstdlib>
 
-
-#define MAX_JSON_TOKENS				(4)
+#define MAX_JSON_TOKENS				(5)
 
 
 std::string intToString(uint32_t intVal);
@@ -51,6 +51,7 @@ public:
 	}
 	void UpdateId(std::string id);
 	void UpdateContent(uint32_t uIntVal);
+	void UpdateContent(int32_t IntVal);
 	void UpdateContent(std::string stringVal);
 	std::string GetId(void);
 	std::string GetContent(void);
@@ -65,6 +66,10 @@ class json{
 	std::array <tokenT, MAX_JSON_TOKENS> tokens;
 	std::string content;
 public:
+
+	json (){
+		this ->content.clear();
+	}
 
 	std::string parse(void){
 		this->content = "{";
@@ -94,8 +99,9 @@ public:
 		}
 		return false;
 	}
-	json (){
-		this ->content.clear();
+
+	std::string GetContent (){
+		return this->content;
 	}
 };
 
