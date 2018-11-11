@@ -28,7 +28,6 @@ private:
 	std::string id;
 	std::string strVal;
 	std::string content;
-	void updateContnent(void){}
 public:
 	tokenT (void){
 		this->id.clear();
@@ -38,21 +37,23 @@ public:
 	tokenT (std::string id, uint32_t uIntVal){
 		this->id = id;
 		this->strVal = intToString(uIntVal);
-		this->updateContnent();
+		this->content = "\"" + this->id + "\""  + ":" +  this->strVal   ;
 	}
 	tokenT (std::string id, std::string stringVal){
 		this->id = id;
 		this->strVal = stringVal;
-		this->content = "\"" + id + "\""  + ":" +   "\"" + stringVal + "\"" ;
+		this->content = "\"" + this->id + "\""  + ":" +   "\"" + this->strVal + "\"" ;
 	}
 	tokenT (std::string id){
 		this->id = id;
-		this->content = "\"" + id + "\""  + ":";
+		this->content = "\"" + this->id + "\""  + ":";
 	}
+
+
 	void UpdateId(std::string id);
-	void UpdateContent(uint32_t uIntVal);
-	void UpdateContent(int32_t IntVal);
-	void UpdateContent(std::string stringVal);
+	void UpdateVal(uint32_t uIntVal);
+	void UpdateVal(int32_t IntVal);
+	void UpdateVal(std::string stringVal);
 	std::string GetId(void);
 	std::string GetContent(void);
 };

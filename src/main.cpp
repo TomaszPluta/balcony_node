@@ -350,7 +350,7 @@ int main(void)
 			if (RTC->ISR & RTC_ISR_ALRAF){
 				RTC->ISR &= ~RTC_ISR_ALRAF;
 //				RtcSetAlarmEveryGivenMinutes(2);
-				RtcSetAlarmEveryGivenSeconds(5);
+				RtcSetAlarmEveryGivenSeconds(8);
 				TOGGLE_LED();
 
 				AdcStartSingleConversion();
@@ -379,7 +379,7 @@ int main(void)
 				jsonDataToSend.update(tokenCounter);
 				MqttPublish publish;
 				publish.buffer = (uint8_t*) jsonDataToSend.GetContent().data();
-				publish.total_len = 16;
+				publish.total_len = strlen((char*)publish.buffer);
 				publish.duplicate = 0;
 				publish.packet_id = 0;
 				publish.qos = MQTT_QOS_0;
