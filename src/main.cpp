@@ -359,23 +359,23 @@ int main(void)
 
 				bmp280_read_uncomp_temperature(&temperature);
 				tempOut = bmp280_compensate_temperature_int32(temperature);
-				tokenTemp.UpdateContent(tempOut);
+				tokenTemp.UpdateVal(tempOut);
 				jsonDataToSend.update(tokenTemp);
 
 				bmp280_read_uncomp_pressure(&pressure);
 				pressOut = bmp280_compensate_pressure_int32(pressure);
-				tokenPress.UpdateContent(pressOut);
+				tokenPress.UpdateVal(pressOut);
 				jsonDataToSend.update(tokenPress);
 
-				tokenLight.UpdateContent((uint32_t)adcBuffDMA[ADC_LIGHT_POS]);
+				tokenLight.UpdateVal((uint32_t)adcBuffDMA[ADC_LIGHT_POS]);
 				jsonDataToSend.update(tokenLight);
-				tokenHumid.UpdateContent((uint32_t)adcBuffDMA[ADC_HUMID_POS]);
+				tokenHumid.UpdateVal((uint32_t)adcBuffDMA[ADC_HUMID_POS]);
 				jsonDataToSend.update(tokenPress);
 
 
 				Rfm12bSpiInit();
 
-				tokenCounter.UpdateContent(pckt_count++);
+				tokenCounter.UpdateVal(pckt_count++);
 				jsonDataToSend.update(tokenCounter);
 				MqttPublish publish;
 				publish.buffer = (uint8_t*) jsonDataToSend.GetContent().data();

@@ -47,31 +47,30 @@ std::string intToString(int32_t intVal){
 
 
 void tokenT::UpdateId(std::string id){
-	this->id = id;
-	this->content = "\"" + id + "\""  + ":";
+	this->id = "\"" + id + "\"";
 }
 void tokenT::UpdateVal(uint32_t uIntVal){
 	this->strVal = intToString(uIntVal);
-	this->content = "\"" + this->id + "\""  + ":" +  this->strVal;
+	this->UpdateContent();
 }
 void tokenT::UpdateVal(int32_t IntVal){
 	this->strVal = intToString(IntVal);
-	this->content = "\"" + this->id + "\""  + ":" +  this->strVal;
+	this->UpdateContent();
 }
 void tokenT::UpdateVal(std::string stringVal){
-	this->strVal = stringVal;
-	this->content = "\"" + this->id + "\""  + ":" +   "\"" + this->strVal + "\"" ;
+	this->strVal =  "\"" + stringVal + "\"";
+	this->UpdateContent();
 }
 std::string tokenT::GetId(void){
-	return this->content;
+	return this->id;
 }
 std::string tokenT::GetContent(void){
 	return this->content;
 }
 
 
-void tokenT::UpdateContnent(){
-	this->content = "\"" + id + "\""  + ":" +   "\"" + stringVal + "\"" ;
+void tokenT::UpdateContent(void){
+	this->content = this->id + ":" + this->strVal;
 }
 
 

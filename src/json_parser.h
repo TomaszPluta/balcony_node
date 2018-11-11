@@ -28,6 +28,7 @@ private:
 	std::string id;
 	std::string strVal;
 	std::string content;
+	void UpdateContent(void);
 public:
 	tokenT (void){
 		this->id.clear();
@@ -35,18 +36,18 @@ public:
 		this->content.clear();
 	}
 	tokenT (std::string id, uint32_t uIntVal){
-		this->id = id;
+		this->id = "\"" + id + "\"";
 		this->strVal = intToString(uIntVal);
-		this->content = "\"" + this->id + "\""  + ":" +  this->strVal   ;
+		this->UpdateContent();
 	}
 	tokenT (std::string id, std::string stringVal){
 		this->id = id;
-		this->strVal = stringVal;
-		this->content = "\"" + this->id + "\""  + ":" +   "\"" + this->strVal + "\"" ;
+		this->strVal = "\"" + stringVal + "\"";
+		this->UpdateContent();
 	}
 	tokenT (std::string id){
 		this->id = id;
-		this->content = "\"" + this->id + "\""  + ":";
+		this->UpdateContent();
 	}
 
 
@@ -81,10 +82,10 @@ public:
 		return this->content;
 	}
 
-	std::string  update (tokenT token){
+	std::string  update (tokenT tokenNew){
 		for (auto & it : tokens){
-			if (it.GetId() == token.GetId()){
-				it.UpdateContent(token.GetContent());
+			if (it.GetId() == tokenNew.GetId()){
+				it.UpdateVal(tokenNew.GetContent());
 				break;
 			}
 		}
