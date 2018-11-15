@@ -64,6 +64,9 @@ void tokenT::UpdateVal(std::string stringVal){
 std::string tokenT::GetId(void){
 	return this->id;
 }
+std::string tokenT::GetValue(void){
+	return this->strVal;
+}
 std::string tokenT::GetContent(void){
 	return this->content;
 }

@@ -13,8 +13,9 @@
 #include <sstream>
 #include <array>
 #include <cstdlib>
+#include <string>
 
-#define MAX_JSON_TOKENS				(5)
+#define MAX_JSON_TOKENS				(6)
 
 
 std::string intToString(uint32_t intVal);
@@ -28,7 +29,7 @@ private:
 	std::string id;
 	std::string strVal;
 	std::string content;
-	void UpdateContent(void);
+
 public:
 	tokenT (void){
 		this->id.clear();
@@ -41,12 +42,12 @@ public:
 		this->UpdateContent();
 	}
 	tokenT (std::string id, std::string stringVal){
-		this->id = id;
+		this->id = "\"" + id + "\"";
 		this->strVal = "\"" + stringVal + "\"";
 		this->UpdateContent();
 	}
 	tokenT (std::string id){
-		this->id = id;
+		this->id = "\"" + id + "\"";
 		this->UpdateContent();
 	}
 
@@ -56,7 +57,9 @@ public:
 	void UpdateVal(int32_t IntVal);
 	void UpdateVal(std::string stringVal);
 	std::string GetId(void);
+	std::string GetValue(void);
 	std::string GetContent(void);
+	void UpdateContent(void);
 };
 
 
@@ -76,16 +79,16 @@ public:
 	std::string parse(void){
 		this->content = "{";
 		for (auto & it : tokens){
-			this->content += it.GetContent();
+			this->content += it.GetContent() + ",";
 		}
-		this->content += "}";
+		this->content.back() = '}';
 		return this->content;
 	}
 
 	std::string  update (tokenT tokenNew){
 		for (auto & it : tokens){
 			if (it.GetId() == tokenNew.GetId()){
-				it.UpdateVal(tokenNew.GetContent());
+				it = tokenNew;
 				break;
 			}
 		}

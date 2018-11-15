@@ -207,6 +207,9 @@ int main(void)
 {
 
 	json jsonDataToSend;
+	tokenT tokentest("testId", "testVal");
+	jsonDataToSend.add(tokentest);
+
 	tokenT tokenCounter("counter");
 	jsonDataToSend.add(tokenCounter);
 	tokenT tokenTemp("temp");
@@ -345,7 +348,7 @@ int main(void)
 
 
 		SysTick->CTRL &= ~ SysTick_CTRL_ENABLE_Msk;
-		uint32_t pckt_count;
+		uint32_t pckt_count = 0;
 		while (1){
 			if (RTC->ISR & RTC_ISR_ALRAF){
 				RTC->ISR &= ~RTC_ISR_ALRAF;
@@ -370,7 +373,7 @@ int main(void)
 				tokenLight.UpdateVal((uint32_t)adcBuffDMA[ADC_LIGHT_POS]);
 				jsonDataToSend.update(tokenLight);
 				tokenHumid.UpdateVal((uint32_t)adcBuffDMA[ADC_HUMID_POS]);
-				jsonDataToSend.update(tokenPress);
+				jsonDataToSend.update(tokenHumid);
 
 
 				Rfm12bSpiInit();
