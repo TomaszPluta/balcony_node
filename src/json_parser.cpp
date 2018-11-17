@@ -96,18 +96,13 @@ void tokenT::UpdateContent(void){
 
 
 {"id":"balcony", "temp":30, "press":1024, "light":500, "hum":60}
-*/
 
 
-/*
- *
 myObj = { "id":"balcony", "temp":30, "press":1024, "light":500, "hum":60,};
 
 
 myObj = { "name":"John", "age":30, "car":null };
 x = myObj["name"];
-
-
 
 myObj = {
     "name":"John",
