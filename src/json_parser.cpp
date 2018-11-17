@@ -79,8 +79,6 @@ void tokenT::UpdateContent(void){
 
 
 
-
-
 /* valid json examples
 {
    "name":"John",

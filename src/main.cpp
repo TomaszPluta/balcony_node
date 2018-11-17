@@ -351,8 +351,7 @@ int main(void)
 	while (1){
 		if (RTC->ISR & RTC_ISR_ALRAF){
 			RTC->ISR &= ~RTC_ISR_ALRAF;
-			//				RtcSetAlarmEveryGivenMinutes(2);
-			RtcSetAlarmEveryGivenSeconds(8);
+
 			TOGGLE_LED();
 
 			AdcStartSingleConversion();
@@ -392,7 +391,8 @@ int main(void)
 			publish.topic_name_len = strlen(topicBalcony);
 			MqttClient_Publish(&client, &publish);
 
-
+			//				RtcSetAlarmEveryGivenMinutes(2);
+			RtcSetAlarmEveryGivenSeconds(30);
 		}
 
 		__WFI();
