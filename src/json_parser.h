@@ -23,7 +23,6 @@ std::string intToString(uint32_t intVal);
 
 
 
-
 class tokenT {
 private:
 	std::string id;
@@ -50,6 +49,7 @@ public:
 		this->id = "\"" + id + "\"";
 		this->UpdateContent();
 	}
+
 
 
 	void UpdateId(std::string id);
@@ -79,8 +79,11 @@ public:
 	std::string parse(void){
 		this->content = "{";
 		for (auto & it : tokens){
-			this->content += it.GetContent() + ",";
+			if (!it.GetId().empty()){
+				this->content += it.GetContent() + ", ";
+			}
 		}
+		this->content.resize(this->content.size()-1);
 		this->content.back() = '}';
 		return this->content;
 	}
