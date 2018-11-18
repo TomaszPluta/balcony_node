@@ -392,7 +392,7 @@ int main(void)
 			MqttClient_Publish(&client, &publish);
 
 			//				RtcSetAlarmEveryGivenMinutes(2);
-			RtcSetAlarmEveryGivenSeconds(30);
+			RtcSetAlarmEveryGivenSeconds(10);
 		}
 
 		__WFI();
